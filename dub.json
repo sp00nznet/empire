@@ -1,0 +1,28 @@
+{
+    "name": "empire",
+    "description": "Empire: Wargame of the Century",
+    "authors": ["Walter Bright"],
+    "license": "proprietary",
+    "targetType": "executable",
+    "targetName": "empire",
+    "sourcePaths": ["source"],
+    "importPaths": ["source"],
+    "versions": ["Windows"],
+    "dflags-ldc": ["-mcpu=native"],
+    "dflags-dmd": [],
+    "lflags-windows": [
+        "/SUBSYSTEM:WINDOWS",
+        "user32.lib",
+        "gdi32.lib",
+        "winmm.lib",
+        "comdlg32.lib"
+    ],
+    "buildTypes": {
+        "release": {
+            "buildOptions": ["releaseMode", "optimize", "inline"]
+        },
+        "debug": {
+            "buildOptions": ["debugMode", "debugInfo"]
+        }
+    }
+}

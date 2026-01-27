@@ -1,0 +1,35 @@
+# Build outputs
+empire.exe
+empire
+*.o
+*.obj
+*.lib
+*.a
+
+# DUB
+.dub/
+dub.selections.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js (for web build)
+node_modules/
+web/dist/
+web/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
