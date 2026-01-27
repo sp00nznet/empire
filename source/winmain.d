@@ -1382,3 +1382,198 @@ void ShowBlast(int state, loc_t loc)
     if (state)
         UpdateWindow(global.hwnd);
 }
+
+/* ================================================================== */
+/* Platform Adapter Functions                                          */
+/* These C-callable functions provide the bridge between the           */
+/* platform-independent IPlatform interface and the Win32 code.        */
+/* ================================================================== */
+
+extern (C):
+
+/**
+ * Flush display updates to screen.
+ */
+void win_flush()
+{
+    UpdateWindow(global.hwnd);
+}
+
+/**
+ * Play UI click sound.
+ */
+void sound_click()
+{
+    if (global.speaker)
+    {
+        PlaySoundA("click.wav", null, SND_ASYNC | SND_FILENAME | SND_NOSTOP);
+    }
+}
+
+/**
+ * Invalidate a single map location for redraw.
+ */
+void win_invalidate_loc(uint loc)
+{
+    if (global.hwnd is null)
+        return;
+
+    RECT locbox;
+    int x = LocToX(loc);
+    int y = LocToY(loc);
+    int dx = cast(int)(10 * global.scalex);
+    int dy = cast(int)(10 * global.scaley);
+
+    locbox.left = x - dx / 2;
+    locbox.right = x + dx / 2;
+    locbox.top = y - dy / 2;
+    locbox.bottom = y + dy / 2;
+
+    InvalidateRect(global.hwnd, &locbox, FALSE);
+}
+
+/**
+ * Invalidate entire sector for redraw.
+ */
+void win_invalidate_sector()
+{
+    if (global.hwnd !is null)
+    {
+        InvalidateRect(global.hwnd, null, TRUE);
+    }
+}
+
+/**
+ * Poll for key input without blocking.
+ * Returns key code or -1 if no key available.
+ */
+int win_poll_key()
+{
+    MSG msg;
+
+    if (PeekMessageA(&msg, null, 0, 0, PM_REMOVE))
+    {
+        if (msg.message == WM_KEYDOWN)
+        {
+            int key = cast(int)msg.wParam;
+            // Convert scan codes to key codes
+            if (key >= 'a' && key <= 'z')
+                key -= 32;  // Convert to uppercase
+            return key;
+        }
+        TranslateMessage(&msg);
+        DispatchMessageA(&msg);
+    }
+    return -1;
+}
+
+/**
+ * Wait for key input (blocking).
+ * Returns key code.
+ */
+int win_wait_key()
+{
+    MSG msg;
+    int key;
+
+    while (true)
+    {
+        if (GetMessageA(&msg, null, 0, 0) <= 0)
+            return -1;
+
+        if (msg.message == WM_KEYDOWN)
+        {
+            key = cast(int)msg.wParam;
+            if (key >= 'a' && key <= 'z')
+                key -= 32;
+            return key;
+        }
+        TranslateMessage(&msg);
+        DispatchMessageA(&msg);
+    }
+}
+
+/**
+ * Play a sound effect.
+ * id: Sound effect ID (maps to SoundId enum)
+ * sync: If true, wait for sound to complete
+ */
+void win_play_sound(int id, bool sync)
+{
+    if (!global.speaker)
+        return;
+
+    static immutable const(char)*[] soundFiles = [
+        "click.wav",        // 0: Click
+        "explode.wav",      // 1: Explosion
+        "splash.wav",       // 2: Splash
+        "flyby.wav",        // 3: Flyby
+        "gun_1.wav",        // 4: Gunfire
+        "ackack1.wav",      // 5: AckAck
+        "bubbles.wav",      // 6: Bubbles
+        "fuel.wav",         // 7: Fuel
+        "error.wav",        // 8: Error
+        "intro.wav",        // 9: Intro
+        "taps.wav",         // 10: Taps
+        "machine1.wav",     // 11: MachineGun
+    ];
+
+    if (id >= 0 && id < soundFiles.length)
+    {
+        uint flags = SND_FILENAME | (sync ? SND_SYNC : SND_ASYNC);
+        PlaySoundA(soundFiles[id], null, flags);
+    }
+}
+
+/**
+ * Show city production dialog.
+ * Returns selected unit type (0-7) or -1 if cancelled.
+ */
+int win_show_city_dialog(int currentPhase)
+{
+    return dialogCitySelect(currentPhase);
+}
+
+/**
+ * Show new game dialog.
+ * Returns number of players (1-6) or 0 if cancelled.
+ */
+int win_show_new_game_dialog()
+{
+    INT_PTR result = DialogBoxParamA(global.hinst, "InitBox", global.hwnd,
+                                      global.lpfnInitDlgProc, 0);
+    if (result)
+    {
+        // IDD_ONE = 161, so numplayers = IDD_xxx - 160
+        return global.numplayers - 160;
+    }
+    return 0;  // Cancelled
+}
+
+/**
+ * Show about dialog.
+ */
+void win_show_about_dialog()
+{
+    DialogBoxParamA(global.hinst, "AboutBox", global.hwnd,
+                    global.lpfnAboutDlgProc, 0);
+}
+
+/**
+ * Delay for specified time units (1 unit = ~100ms).
+ */
+void win_delay(int units)
+{
+    if (units > 0)
+    {
+        Sleep(units * 100);
+    }
+}
+
+/**
+ * Get current time in milliseconds.
+ */
+long win_get_time_ms()
+{
+    return GetTickCount();
+}
