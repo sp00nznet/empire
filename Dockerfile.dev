@@ -1,0 +1,19 @@
+# Empire: Wargame of the Century
+# Development Dockerfile with hot-reloading
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY web/package.json web/package-lock.json* ./
+RUN npm ci
+
+# Copy source (will be overridden by volume mount)
+COPY web/ ./
+
+# Expose Vite dev server port
+EXPOSE 3000
+
+# Start development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

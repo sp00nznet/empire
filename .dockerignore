@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+
+# Node modules (will be installed in container)
+web/node_modules
+node_modules
+
+# Build outputs
+web/dist
+dist
+
+# Development files
+*.md
+!README.md
+docs/
+
+# Windows build files
+source/
+*.d
+*.res
+*.exe
+*.obj
+*.bmp
+*.wav
+dub.json
+dub.selections.json
+empire.rc
+empire.manifest
+build.bat
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude/AI files
+.claude/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test files
+*.test.ts
+*.spec.ts
+__tests__/
+coverage/
