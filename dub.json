@@ -5,8 +5,16 @@
     "license": "proprietary",
     "targetType": "executable",
     "targetName": "empire",
-    "sourcePaths": ["source"],
-    "importPaths": ["source"],
+    "sourcePaths": [
+        "source",
+        "source/core",
+        "source/platform/windows"
+    ],
+    "importPaths": [
+        "source",
+        "source/core",
+        "source/platform/windows"
+    ],
     "versions": ["Windows"],
     "dflags-ldc": ["-mcpu=native"],
     "dflags-dmd": [],
@@ -24,5 +32,12 @@
         "debug": {
             "buildOptions": ["debugMode", "debugInfo"]
         }
-    }
+    },
+    "configurations": [
+        {
+            "name": "windows",
+            "platforms": ["windows"],
+            "versions": ["Windows"]
+        }
+    ]
 }
