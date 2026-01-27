@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empire: Wargame of the Century</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: 18px;
+      color: #0f0;
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #map-canvas {
+      border: 2px solid #333;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    #text-display {
+      width: 800px;
+      background: #111;
+      border: 1px solid #333;
+      padding: 5px;
+      font-size: 14px;
+      line-height: 1.4;
+      min-height: 100px;
+    }
+
+    .text-row {
+      white-space: pre;
+    }
+
+    #status-bar {
+      display: flex;
+      gap: 20px;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    #menu-dialog, #city-dialog {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      border: 2px solid #666;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    #menu-dialog.visible, #city-dialog.visible {
+      display: block;
+    }
+
+    .dialog-title {
+      font-size: 16px;
+      color: #0f0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .dialog-button {
+      display: block;
+      width: 100%;
+      padding: 8px 16px;
+      margin: 5px 0;
+      background: #333;
+      border: 1px solid #666;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .dialog-button:hover {
+      background: #444;
+    }
+
+    .dialog-button:focus {
+      outline: 2px solid #0f0;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 50;
+    }
+
+    #overlay.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>EMPIRE: Wargame of the Century</h1>
+
+  <div id="game-container">
+    <canvas id="map-canvas" width="800" height="480"></canvas>
+    <div id="text-display">
+      <div class="text-row" id="text-row-0"></div>
+      <div class="text-row" id="text-row-1"></div>
+      <div class="text-row" id="text-row-2"></div>
+      <div class="text-row" id="text-row-3"></div>
+      <div class="text-row" id="text-row-4"></div>
+    </div>
+    <div id="status-bar">
+      <span>Round: <span id="round-display">0</span></span>
+      <span>Cities: <span id="cities-display">0</span></span>
+      <span>Units: <span id="units-display">0</span></span>
+      <span>Press H for help</span>
+    </div>
+  </div>
+
+  <div id="overlay"></div>
+
+  <div id="menu-dialog">
+    <div class="dialog-title">Empire</div>
+    <button class="dialog-button" id="btn-new-1">1 Player (vs Computer)</button>
+    <button class="dialog-button" id="btn-new-2">2 Players</button>
+    <button class="dialog-button" id="btn-new-3">3 Players</button>
+    <button class="dialog-button" id="btn-load">Load Saved Game</button>
+  </div>
+
+  <div id="city-dialog">
+    <div class="dialog-title">City Production</div>
+    <button class="dialog-button" data-phase="0">A - Army (5 turns)</button>
+    <button class="dialog-button" data-phase="1">F - Fighter (10 turns)</button>
+    <button class="dialog-button" data-phase="2">D - Destroyer (20 turns)</button>
+    <button class="dialog-button" data-phase="3">T - Transport (30 turns)</button>
+    <button class="dialog-button" data-phase="4">S - Submarine (25 turns)</button>
+    <button class="dialog-button" data-phase="5">R - Cruiser (50 turns)</button>
+    <button class="dialog-button" data-phase="6">C - Carrier (60 turns)</button>
+    <button class="dialog-button" data-phase="7">B - Battleship (75 turns)</button>
+  </div>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+</html>

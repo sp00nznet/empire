@@ -15,7 +15,7 @@ This document outlines the complete roadmap for porting Empire to modern platfor
 | 1 | D2 Migration | COMPLETE |
 | 2 | Platform Abstraction Layer | COMPLETE |
 | 3 | Windows 11 Native Port | COMPLETE |
-| 4 | HTML5 TypeScript Port | Pending |
+| 4 | HTML5 TypeScript Port | COMPLETE |
 | 5 | Docker Containerization | Pending |
 
 ---
@@ -153,12 +153,27 @@ assets/
 
 ---
 
-## Phase 4: HTML5 TypeScript Port
+## Phase 4: HTML5 TypeScript Port (COMPLETE)
 
 ### Objectives
 - Rewrite game logic in TypeScript
 - Native Canvas rendering
 - Web Audio API for sounds
+
+### Deliverables
+- [x] `web/src/core/types.ts` - Core game types ported from D
+- [x] `web/src/core/map.ts` - Map utilities
+- [x] `web/src/core/path.ts` - Pathfinding algorithm
+- [x] `web/src/core/game.ts` - Game state management, RNG, map generation
+- [x] `web/src/platform/renderer.ts` - Canvas 2D rendering with sector view
+- [x] `web/src/platform/audio.ts` - Web Audio API sound effects
+- [x] `web/src/platform/input.ts` - Keyboard input handling (QWEASDZXC + arrows)
+- [x] `web/src/platform/storage.ts` - LocalStorage save/load
+- [x] `web/src/index.ts` - Main game controller
+- [x] `web/index.html` - Game HTML with dialogs
+- [x] `web/package.json` - NPM configuration
+- [x] `web/tsconfig.json` - TypeScript configuration
+- [x] `web/vite.config.ts` - Vite build configuration
 
 ### Project Structure
 
