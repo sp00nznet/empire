@@ -14,7 +14,7 @@ This document outlines the complete roadmap for porting Empire to modern platfor
 |-------|-------------|--------|
 | 1 | D2 Migration | COMPLETE |
 | 2 | Platform Abstraction Layer | COMPLETE |
-| 3 | Windows 11 Native Port | Pending |
+| 3 | Windows 11 Native Port | COMPLETE |
 | 4 | HTML5 TypeScript Port | Pending |
 | 5 | Docker Containerization | Pending |
 

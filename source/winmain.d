@@ -24,6 +24,16 @@ import core.stdc.string;
 import core.sys.windows.windows;
 import core.runtime;
 
+// Windows constants not in core.sys.windows
+enum LOGPIXELSX = 88;
+enum LOGPIXELSY = 90;
+
+// SetWindowPos flags
+enum SWP_NOSIZE = 0x0001;
+enum SWP_NOMOVE = 0x0002;
+enum SWP_NOZORDER = 0x0004;
+enum SWP_NOACTIVATE = 0x0010;
+
 import empire;
 import winemp;
 import eplayer;
@@ -138,6 +148,10 @@ struct Global
     int blastState; // !=0 means draw blast
     int blastx;
     int blasty;     // location of blast
+
+    // DPI scaling (Windows 10/11)
+    uint dpi;           // current DPI (96 = 100%)
+    float dpiScale;     // scale factor (1.0 = 100%)
 }
 
 Global global;
@@ -150,6 +164,9 @@ int doit(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     HWND hwnd;
     MSG msg;
     WNDCLASSA wndclass;
+
+    // Initialize DPI awareness for Windows 10/11
+    initDpiAwareness();
 
     if (!hPrevInstance)
     {
@@ -244,11 +261,16 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
         case WM_CREATE:
             global.speaker = 1;
 
-            global.cxClient = 120;
-            global.cyClient = 160;
+            // Initialize DPI scaling
+            global.dpi = getDpiForWindow(hwnd);
+            if (global.dpi == 0) global.dpi = 96;
+            global.dpiScale = cast(float)global.dpi / 96.0f;
 
-            global.pixelx = 120;
-            global.pixely = 120;
+            global.cxClient = scaleDpi(120, global.dpi);
+            global.cyClient = scaleDpi(160, global.dpi);
+
+            global.pixelx = scaleDpi(120, global.dpi);
+            global.pixely = scaleDpi(120, global.dpi);
 
             global.hwnd = hwnd;
             global.scalex = 1.0;
@@ -359,6 +381,23 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                 adjSector(global.scalex, global.scaley);
             }
 
+            return 0;
+
+        case 0x02E0:  // WM_DPICHANGED (Windows 8.1+)
+            // Update DPI when window moves between monitors
+            global.dpi = HIWORD(wParam);
+            global.dpiScale = cast(float)global.dpi / 96.0f;
+
+            // Resize window to suggested size
+            RECT* prcNewWindow = cast(RECT*)lParam;
+            if (prcNewWindow)
+            {
+                SetWindowPos(hwnd, null,
+                    prcNewWindow.left, prcNewWindow.top,
+                    prcNewWindow.right - prcNewWindow.left,
+                    prcNewWindow.bottom - prcNewWindow.top,
+                    SWP_NOZORDER | SWP_NOACTIVATE);
+            }
             return 0;
 
         case WM_RBUTTONDOWN:
@@ -1381,6 +1420,103 @@ void ShowBlast(int state, loc_t loc)
     global.blasty = blastbox.top;
     if (state)
         UpdateWindow(global.hwnd);
+}
+
+/* ================================================================== */
+/* DPI Awareness for Windows 10/11                                     */
+/* ================================================================== */
+
+/**
+ * DPI awareness context values for Windows 10 1703+
+ */
+enum DPI_AWARENESS_CONTEXT : HANDLE
+{
+    UNAWARE              = cast(HANDLE)-1,
+    SYSTEM_AWARE         = cast(HANDLE)-2,
+    PER_MONITOR_AWARE    = cast(HANDLE)-3,
+    PER_MONITOR_AWARE_V2 = cast(HANDLE)-4,
+    UNAWARE_GDISCALED    = cast(HANDLE)-5,
+}
+
+/**
+ * Initialize DPI awareness for the application.
+ * Tries the best available DPI awareness mode.
+ */
+void initDpiAwareness() nothrow
+{
+    // Try Windows 10 1703+ API first (best option)
+    HMODULE user32 = GetModuleHandleA("user32.dll");
+    if (user32)
+    {
+        // SetProcessDpiAwarenessContext (Windows 10 1703+)
+        alias SetDpiContextFn = extern(Windows) BOOL function(DPI_AWARENESS_CONTEXT) nothrow;
+        auto setDpiContext = cast(SetDpiContextFn)GetProcAddress(user32, "SetProcessDpiAwarenessContext");
+        if (setDpiContext)
+        {
+            // Try Per-Monitor V2 first (best for Windows 10/11)
+            if (setDpiContext(DPI_AWARENESS_CONTEXT.PER_MONITOR_AWARE_V2))
+                return;
+            // Fall back to Per-Monitor V1
+            if (setDpiContext(DPI_AWARENESS_CONTEXT.PER_MONITOR_AWARE))
+                return;
+        }
+    }
+
+    // Try Windows 8.1+ API
+    HMODULE shcore = LoadLibraryA("shcore.dll");
+    if (shcore)
+    {
+        alias SetProcessDpiAwarenessFn = extern(Windows) HRESULT function(int) nothrow;
+        auto setDpiAwareness = cast(SetProcessDpiAwarenessFn)GetProcAddress(shcore, "SetProcessDpiAwareness");
+        if (setDpiAwareness)
+        {
+            // PROCESS_PER_MONITOR_DPI_AWARE = 2
+            setDpiAwareness(2);
+            return;
+        }
+    }
+
+    // Fall back to Vista+ API
+    if (user32)
+    {
+        alias SetProcessDPIAwareFn = extern(Windows) BOOL function() nothrow;
+        auto setDpiAware = cast(SetProcessDPIAwareFn)GetProcAddress(user32, "SetProcessDPIAware");
+        if (setDpiAware)
+        {
+            setDpiAware();
+        }
+    }
+}
+
+/**
+ * Get the DPI for a window (Windows 10 1607+) or system DPI.
+ */
+uint getDpiForWindow(HWND hwnd) nothrow
+{
+    HMODULE user32 = GetModuleHandleA("user32.dll");
+    if (user32)
+    {
+        alias GetDpiForWindowFn = extern(Windows) UINT function(HWND) nothrow;
+        auto getDpi = cast(GetDpiForWindowFn)GetProcAddress(user32, "GetDpiForWindow");
+        if (getDpi && hwnd)
+        {
+            return getDpi(hwnd);
+        }
+    }
+
+    // Fall back to system DPI
+    HDC hdc = GetDC(null);
+    uint dpi = cast(uint)GetDeviceCaps(hdc, LOGPIXELSX);
+    ReleaseDC(null, hdc);
+    return dpi;
+}
+
+/**
+ * Scale a value based on DPI.
+ */
+int scaleDpi(int value, uint dpi) pure nothrow
+{
+    return (value * dpi) / 96;
 }
 
 /* ================================================================== */
