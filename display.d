@@ -375,7 +375,7 @@ struct Display
     }
     body
     {
-	static char *msg[8][2] =
+	static char*[2][8] msg =
 	[   [	"army",			"armies"		],
 	    [   "fighter",		"fighters"		],
 	    [   "destroyer",		"destroyers"		],
@@ -387,7 +387,7 @@ struct Display
 	];
 
 	// For narrow displays
-	static char msgn[8][2][3] =
+	static char[3][2][8] msgn =
 	[
 	    [   "A","As" ],
 	    [   "F","Fs" ],
@@ -824,7 +824,7 @@ struct Display
      */
 
     void valcmd(int mode)
-    {   static char *valmsg[] =
+    {   static char*[] valmsg =
 	[   "valcmd()",			// just a place holder
 	    "QWEADZXC,FGHIKLNRSUVY<>,space", // Move
 	    "QWEADZXC,FGHIKLNPRSU<>,esc",	// Survey

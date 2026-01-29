@@ -81,7 +81,7 @@ int dist(loc_t loc1,loc_t loc2)
  */
 
 int movdir(loc_t loc1,loc_t loc2)
-{ static int mov[] = [3,4,5,2,-1,6,1,0,7];
+{ static int[] mov = [3,4,5,2,-1,6,1,0,7];
   int i = 0;
   int r1,c1,r2,c2;
 

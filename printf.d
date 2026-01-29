@@ -32,11 +32,11 @@ const int LOG = 1;		// disable logging by setting this to 0
 
 version (Windows)
 {
-    char logfile[] = r"\empire.log";
+    char[] logfile = r"\empire.log";
 }
 version (linux)
 {
-    char logfile[] = "/var/log/empire.log";
+    char[] logfile = "/var/log/empire.log";
 }
 
 /*********************************************

@@ -3530,7 +3530,7 @@ struct Player
 	int i;
 	int co40;
 	char *s;
-	char buf[r.sizeof * 3 + 1];
+	char[r.sizeof * 3 + 1] buf;
 	Text *t = &display.text;
 
 	if (!watch)

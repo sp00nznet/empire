@@ -136,7 +136,7 @@ void hrdprd(Player *p)
  */
 
 void chkwin()
-{ int n[PLYMAX+1];			/* # of cities owned by plyr #	*/
+{ int[PLYMAX+1] n;			/* # of cities owned by plyr #	*/
   int i,j;
   Text *t;
   Player *p;
