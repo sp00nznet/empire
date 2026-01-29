@@ -694,7 +694,25 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                     SelectObject(hdc, global.hFont);
                     for (i = 0; i < 4; i++)
                     {
-                        TextOutA(hdc, 0, global.cyChar * i, vbuffer[i].ptr, cast(int)strlen(vbuffer[i].ptr));
+                        // Split rendering: player stats on left, action messages on right
+                        int len = cast(int)strlen(vbuffer[i].ptr);
+                        int splitCol = 68;  // Where action messages start
+
+                        if (i <= 1 && len > splitCol)
+                        {
+                            // Render player stats (left side)
+                            TextOutA(hdc, 0, global.cyChar * i, vbuffer[i].ptr, splitCol);
+
+                            // Render action messages (right side of screen)
+                            int rightLen = len - splitCol;
+                            int rightX = global.cxClient - (rightLen * global.cxChar);
+                            if (rightX < splitCol * global.cxChar) rightX = splitCol * global.cxChar;
+                            TextOutA(hdc, rightX, global.cyChar * i, vbuffer[i].ptr + splitCol, rightLen);
+                        }
+                        else
+                        {
+                            TextOutA(hdc, 0, global.cyChar * i, vbuffer[i].ptr, len);
+                        }
                     }
                 }
             }
