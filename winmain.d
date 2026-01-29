@@ -9,6 +9,14 @@ import core.stdc.stdlib;
 import core.stdc.string : strlen;
 import core.sys.windows.windows;
 
+// LoadImageA for loading large bitmaps from file
+extern (Windows) HANDLE LoadImageA(HINSTANCE hInst, LPCSTR name, UINT type, int cx, int cy, UINT fuLoad);
+enum : UINT {
+    IMAGE_BITMAP = 0,
+    LR_LOADFROMFILE = 0x0010,
+    LR_CREATEDIBSECTION = 0x2000
+}
+
 // Debug logging
 __gshared FILE* debugLog;
 
@@ -357,7 +365,7 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    }
 	    global.unknown10 = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_UNKNOWN10));
 	    global.hCursor = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_CURSOR));
-	    global.hSplash = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_SPLASH));
+	    global.hSplash = LoadImageA(null, "empire2.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	    global.hBlast = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_BLAST));
 	    global.hBlastmask = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_BLASTMASK));
 
