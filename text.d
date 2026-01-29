@@ -18,7 +18,7 @@
 module text;
 
 import core.stdc.stdio;
-import std.ctype;
+import core.stdc.ctype;
 
 import empire;
 import printf;
