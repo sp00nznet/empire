@@ -4,6 +4,7 @@
 // Compile with Digital Mars compiler www.digitalmars.com
 // www.classicempire.com
 
+import core.stdc.stdio : FILE, fopen;
 import core.stdc.stdlib;
 import core.sys.windows.windows;
 
@@ -13,6 +14,13 @@ import eplayer;
 import display;
 import twin;
 import init;
+import move;
+import var;
+import mapdata;
+
+enum _MAX_PATH = 260;
+enum _MAX_FNAME = 256;
+enum _MAX_EXT = 256;
 
 /********************************************************/
 extern (C) void gc_init();
@@ -59,7 +67,7 @@ int WinMain(HINSTANCE hInstance,
 
 extern (Windows)
 {
-    alias int function(HANDLE, uint, uint, int) DLGPROC;
+    alias LRESULT function(HWND, uint, WPARAM, LPARAM) nothrow DLGPROC;
 }
 
 struct Global
@@ -168,7 +176,7 @@ int doit(HANDLE hInstance, HANDLE hPrevInstance,
 
 version(none)
 {
-    hwnd = CreateWindowA(szAppName, "Empire: Wargame of the Century",
+    hwnd = CreateWindowA(szAppName.ptr, "Empire: Wargame of the Century",
                         WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT, CW_USEDEFAULT,
                           124, 160 + 34 + 20,
@@ -176,7 +184,7 @@ version(none)
 }
 else
 {
-    hwnd = CreateWindowA(szAppName, "Empire: Wargame of the Century",
+    hwnd = CreateWindowA(szAppName.ptr, "Empire: Wargame of the Century",
 			WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT, CW_USEDEFAULT,
                           CW_USEDEFAULT, CW_USEDEFAULT,
@@ -202,7 +210,7 @@ else
 		slice();
 	}
     }
-    return msg.wParam;
+    return cast(int)msg.wParam;
 }
 
 void DrawBitmap(HDC hdc, short xStart, short yStart, HBITMAP hBitmap, double scalex, double scaley, DWORD mode)
@@ -246,7 +254,7 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
     // File dialog box
     static char[_MAX_PATH] szFileName;
     static char[_MAX_FNAME + _MAX_EXT] szTitleName;
-    static char*[] szFilter = [ "Empire Files (*.EMP)", "*.emp", "" ];
+    static const(char)*[] szFilter = [ "Empire Files (*.EMP)", "*.emp", "" ];
 
     switch (message)
     {
@@ -263,7 +271,7 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.scalex = 1.0;
 	    global.scaley = 1.0;
 	    global.numplayers = IDD_FOUR;
-	    global.map = .map;
+	    global.map = var.map.ptr;
 	    global.offsetx = 0;
 	    global.offsety = 0;
 
@@ -335,9 +343,9 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    SelectObject(hdc, global.hFont);
 
 	    GetTextMetricsA(hdc, &tm);
-	    global.cxChar = tm.tmAveCharWidth;
-	    global.cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * global.cxChar / 2;
-	    global.cyChar = tm.tmHeight + tm.tmExternalLeading;
+	    global.cxChar = cast(short)tm.tmAveCharWidth;
+	    global.cxCaps = cast(short)((tm.tmPitchAndFamily & 1 ? 3 : 2) * global.cxChar / 2);
+	    global.cyChar = cast(short)(tm.tmHeight + tm.tmExternalLeading);
 
 	    ReleaseDC(hwnd, hdc);
 	    return 0;
@@ -1084,8 +1092,8 @@ int dialogCitySelect(int oldphase)
  * "Init" dialog box.
  */
 
-extern (Windows) BOOL InitDlgProc (HWND hDlg, uint message, uint wParam,
-                                                               LONG lParam)
+extern (Windows) LRESULT InitDlgProc (HWND hDlg, uint message, WPARAM wParam,
+                                                               LPARAM lParam) nothrow
 {
     switch (message)
     {
