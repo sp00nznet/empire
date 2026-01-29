@@ -1436,6 +1436,7 @@ struct Player
 	    i = dialogCitySelect(c.phs);
 	    winmain.debugWrite("phasin: dialogCitySelect returned");
 	    ab = typx[i].unichr;
+	    winmain.debugWrite("phasin: got unichr");
 	}
 	else
 	{
@@ -1454,10 +1455,15 @@ struct Player
 	    t.curs(t.DS(0) + 25);		// where we want the prod to beg
 	    t.output(ab);			// echo
 	}
+	winmain.debugWrite("phasin: setting city phase");
 	c.phs = cast(ubyte)i;			// set city phase
+	winmain.debugWrite("phasin: setting city fnd");
 	c.fnd = p.round + typx[i].phstart;
+	winmain.debugWrite("phasin: calling typcit again");
 	typcit(p,c);
+	winmain.debugWrite("phasin: calling delay");
 	d.delay(1);
+	winmain.debugWrite("phasin: done");
     }
 
 
