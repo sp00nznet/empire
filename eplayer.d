@@ -20,6 +20,7 @@ import empire;
 import display;
 import path;
 import move;
+import var;
 
 // For each player
 
@@ -77,7 +78,7 @@ struct Player
     void tslice()
     {   int i;
 	Unit *u;
-	Player *p = this;
+	Player *p = &this;
 
 	if (!p.human)
 	{   int x;
@@ -174,7 +175,7 @@ struct Player
     int Mmove(Unit *u)
     {   dir_t r2;
         int e;
-        Player *p = this;
+        Player *p = &this;
 
         do
         {   p.sensor(u.loc);		// get up to date before move
@@ -219,7 +220,7 @@ struct Player
 	int type = u.typ;		// what type of unit we have
 	int ab = .map[loc];		// what's there
 	int ac;
-	Player *p = this;
+	Player *p = &this;
 	Display *d = p.display;
 	Text *t = &d.text;
 
@@ -446,7 +447,7 @@ struct Player
 
     void sector(loc_t loc)
     {
-	Player *p = this;
+	Player *p = &this;
 	Display *d = p.display;
 	Text *t = &p.display.text;
 
@@ -482,7 +483,7 @@ struct Player
       int i,r2,o;
       uint z6;
       ubyte pab,rab;
-      Player *p = this;
+      Player *p = &this;
 
       debug assert(chkloc(loc));
 
@@ -529,7 +530,7 @@ struct Player
 
     void center(loc_t loc)
     {   int row,col,rowsize,colsize,size;
-        Player *p = this;
+        Player *p = &this;
         Display *d = p.display;
 
       row = ROW(loc);
@@ -554,7 +555,7 @@ struct Player
     {   int n;
         loc_t loc;
         City *c;
-        Player *p = this;
+        Player *p = &this;
 
         do
         {   n = empire.random(CITMAX);	// select a city at random
@@ -593,7 +594,7 @@ struct Player
     int hmove(Unit *u,dir_t *pr2)
     {   loc_t oldloc;
       int cmd;
-      Player *p = this;
+      Player *p = &this;
       Display *d = p.display;
       Text *t = &d.text;
 
@@ -791,7 +792,7 @@ struct Player
 
     void cmdF(Unit *u)
     {   int ab,md;
-      Player *p = this;
+      Player *p = &this;
 
       md = p.mode;			// shorthand
       if (md == mdTO) goto err;
@@ -839,7 +840,7 @@ struct Player
 
     int cmdG(Unit *u)
     {   int md,cloc,i,mindist,minloc;
-      Player *p = this;
+      Player *p = &this;
 
       md = p.mode;
       if (md == mdTO) goto err;
@@ -904,7 +905,7 @@ struct Player
 
     void cmdK(Unit *u)
     {
-      Player *p = this;
+      Player *p = &this;
 
       if (p.mode == mdMOVE)
       {   p.mycmod(u,fnAW,0);
@@ -932,7 +933,7 @@ struct Player
 
     int cmdL(Unit *u)
     {   int type,ab;
-      Player *p = this;
+      Player *p = &this;
 
       ab = .map[p.curloc];
       if (own[ab] == p.num &&		// if we own the unit and
@@ -950,7 +951,7 @@ struct Player
 
     void cmdP()
     {
-      Player *p = this;
+      Player *p = &this;
 
       if (p.mode != mdSURV)		// only allowed in survey mode
 	    goto err;
@@ -973,7 +974,7 @@ struct Player
 
     int cmdT(Unit *u)
     {   int ila;
-      Player *p = this;
+      Player *p = &this;
 
       if (p.mode != mdTO)		// if not in TO mode
 	{   cmderror();
@@ -998,7 +999,7 @@ struct Player
 
     void cmdU(Unit *u)
     {   int i,type;
-      Player *p = this;
+      Player *p = &this;
 
       if (p.cittst())				// if we're sitting on a city
 	    for (i = unitop; i--;)
@@ -1038,7 +1039,7 @@ struct Player
 
     int mycmod(Unit *u,int ifo,int ila)
     {   int i;
-      Player *p = this;
+      Player *p = &this;
 
       if (!p.valid(u))			// if not a valid unit
       {   cmderror();
@@ -1066,7 +1067,7 @@ struct Player
 
     int valid(Unit *u)
     {   int ab;
-      Player *p = this;
+      Player *p = &this;
 
       if (p.mode == mdMOVE && p.curloc == u.loc) return true;
       ab = .map[p.curloc];
@@ -1080,7 +1081,7 @@ struct Player
 
     int cittst()
     {   int ab;
-      Player *p = this;
+      Player *p = &this;
 
       ab = .map[p.curloc];
       return (typ[ab] == X && own[ab] == p.num);
@@ -1133,7 +1134,7 @@ struct Player
     void typhdg()
     {   int ab;
       loc_t loc;
-      Player *p = this;
+      Player *p = &this;
 
       loc = p.curloc;			// current location
       ab = .map[loc];			// get map val of where we are
@@ -1153,7 +1154,7 @@ struct Player
 
     void chksleep(Unit *u,int r2)
     {   uint loc,ab;
-      Player *p = this;
+      Player *p = &this;
 
       if (u.typ != A) return;		// if not an army
       loc = u.loc + arrow(r2);
@@ -1194,7 +1195,7 @@ struct Player
     int seeifok(Unit *u,dir_t r2)
     {   loc_t z6;
       int ac,ab,type;
-      Player *p = this;
+      Player *p = &this;
 
       z6 = u.loc + arrow(r2);		// see where we're going
       ab = .map[u.loc];			// see where we are
@@ -1240,7 +1241,7 @@ struct Player
 
     int mycode(Unit *u,dir_t *pr2)
     {   int loc,type,ab,ifo,ila;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       type = u.typ;
@@ -1334,7 +1335,7 @@ struct Player
 
     int okmove(Unit *u,dir_t r2)
     {   int z6,ac,ab,type;
-      Player *p = this;
+      Player *p = &this;
 
       assert(!(r2 & ~7));
       z6 = u.loc + arrow(r2);		// see where we're going
@@ -1389,7 +1390,7 @@ struct Player
     void phasin(City *c)
     {   loc_t loc;
 	int ab,i;
-	Player *p = this;
+	Player *p = &this;
 	Display *d = p.display;
 	Text *t = &d.text;
 
@@ -1528,7 +1529,7 @@ struct Player
 
     int cmove(Unit *u,dir_t *pr2)
     {   static int c = ' ';
-      Player *p = this;
+      Player *p = &this;
       Display *d = p.display;
 
       u.abd = aboard(u);			// count how many are aboard
@@ -2117,7 +2118,7 @@ struct Player
     {   int r,ab,i;
       loc_t loc,loc2;
       dir_t r2 = -1;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       r = *pr2 | 1;				// diagonal
@@ -2183,7 +2184,7 @@ struct Player
     void arrloc(loc_t loc)
     {   uint i;
 	uint *pl;
-	Player *p = this;
+	Player *p = &this;
 
 	pl = &p.troopt[0][0];
 	for (i = 6 * 5; i--; pl++)
@@ -2246,7 +2247,7 @@ struct Player
     int around(Unit *u,dir_t *pr2)
     {   int i;
       dir_t r2;
-      Player *p = this;
+      Player *p = &this;
 
       assert(u.dir == 1 || u.dir == -1);
       r2 = *pr2 & 7;			// in case *pr2 = -1
@@ -2313,7 +2314,7 @@ struct Player
 
     void ARMYco(Unit *u,dir_t *pr2)
     {   int at;
-      Player *p = this;
+      Player *p = &this;
 
       if (citltr(u.loc,pr2)) return;	// if unowned cities
       if (explor(u,pr2)) return;		// if territory to explore
@@ -2352,7 +2353,7 @@ struct Player
     int armtar(Unit *u)
     {   loc_t loc,loccit;
       int i,end;
-      Player *p = this;
+      Player *p = &this;
       int distance;
 
       if (NEW)
@@ -2390,7 +2391,7 @@ struct Player
     {   uint loc;
         uint* pl;
         uint i;
-        Player *p = this;
+        Player *p = &this;
 
         loc = u.loc;
         assert(chkloc(loc));
@@ -2454,7 +2455,7 @@ struct Player
 
     void FIGHif(Unit *u)
     {
-      Player *p = this;
+      Player *p = &this;
 
       u.fuel = cast(int) u.hit;		// get amount of fuel left
       if (u.fuel < typx[F].hittab)		// if F is airborne
@@ -2511,7 +2512,7 @@ struct Player
       loc_t loc = u.loc;
       int i,end,inc;
       City *cmax;
-      Player *p = this;
+      Player *p = &this;
 
       assert(chkloc(loc));
       i = end = empire.random(CITMAX);		// set random end
@@ -2586,7 +2587,7 @@ struct Player
     int figtar(Unit *u)
     {   uint loc,loccit;
       int i,end;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       assert(chkloc(loc));
@@ -2776,7 +2777,7 @@ struct Player
     int port(Unit *u)
     {   loc_t loc,cloc;
       uint min,dtry,i,end;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       assert(chkloc(loc));
@@ -2808,7 +2809,7 @@ struct Player
 
     int armcit(Unit *u)
     {   uint loc,cloc,min,dtry,i,end;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       assert(chkloc(loc));
@@ -2848,7 +2849,7 @@ struct Player
     int trotar(Unit *u,int flag)
     {   loc_t loc,cloc;
       uint min,dtry,i;
-      Player *p = this;
+      Player *p = &this;
 
       if (!NEW)
 	    flag = 0;
@@ -2894,7 +2895,7 @@ struct Player
     int shipta(Unit *u)
     {   loc_t loc,cloc;
       uint min,dtry,i,end;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       assert(chkloc(loc));
@@ -2927,7 +2928,7 @@ struct Player
     int shiptt(Unit *u)
     {   loc_t loc,uloc;
       uint end,i;
-      Player *p = this;
+      Player *p = &this;
 
       loc = u.loc;
       assert(chkloc(loc));
@@ -2954,7 +2955,7 @@ struct Player
 
     int shiptr(Unit *u)
     {   uint loc,tloc,min,dt,i,j,mask;
-	Player *p = this;
+	Player *p = &this;
 	static uint[6] nshprf =		// which rows to look at
 	[   mD|mT|mS,			// D: DT S...
 	    mT,				// T: .T ....
@@ -2998,7 +2999,7 @@ struct Player
 
     int lodarm(Unit *u,dir_t *pr2)
     {   uint loc,uloc,ab,i;
-	Player *p = this;
+	Player *p = &this;
 
 	if (u.ifo != IFOloadarmy) return false;	// only Ts can have this
 	loc = u.loc;
@@ -3096,7 +3097,7 @@ struct Player
 
     void cityct()
     {   int i;
-        Player *p = this;
+        Player *p = &this;
 
         for (i = TYPMAX; i--;)		// clear arrays
 	    p.numuni[i] = p.numphs[i] = 0;
@@ -3145,7 +3146,7 @@ struct Player
       int i;				// city number
       loc_t loc;
       int edge;				// # of seas around city
-      Player *p = this;
+      Player *p = &this;
 
       p.cityct();				// bring city vars up to date
       for (i = CITMAX; i--;)		// loop thru cities
@@ -3245,7 +3246,7 @@ struct Player
      */
 
     void island(City *c)
-    {   Player *p = this;
+    {   Player *p = &this;
 
 	if (p.numown > 1)			// if own more than 1 city
 	{   if (!c.phs)			// if making armies
@@ -3266,7 +3267,7 @@ struct Player
      */
 
     void selshp(City *c)
-    {   Player *p = this;
+    {   Player *p = &this;
 	int j;
 
 	c.phs = B;			// try battleships
@@ -3291,7 +3292,7 @@ struct Player
      */
 
     int ckloci(City *c)
-    {   Player *p = this;
+    {   Player *p = &this;
 	int j;
 	uint *pl;
 
@@ -3317,7 +3318,7 @@ struct Player
      */
 
     int makfs(City *c,int crowd,int edge)
-    {   Player *p = this;
+    {   Player *p = &this;
 
 	if (!edge)				// if land-locked city
 	{   if (p.numuni[A] <= 3 * p.numuni[F] && !crowd)
@@ -3345,7 +3346,7 @@ struct Player
 
     void updcmp(loc_t loc)
     {	ubyte ab;
-	Player *p = this;
+	Player *p = &this;
 
       ab = .map[loc];			// get map value
       if (own[ab] == p.num)
@@ -3377,7 +3378,7 @@ struct Player
 
     void threat(loc_t loc)
     {   int i;
-        Player *p = this;
+        Player *p = &this;
 
         for (i = CITMAX; i--;)
 	{   if (city[i].own == p.num &&	// if we own the city
@@ -3401,7 +3402,7 @@ struct Player
     void updloc(loc_t loc)
     {   uint i;
 	uint* pl;
-	Player *p = this;
+	Player *p = &this;
 
         pl = &p.loci[0];
         for (i = LOCMAX; i--;)
@@ -3431,7 +3432,7 @@ struct Player
     void updtro(loc_t loc,uint ty)
     {   uint* pl;
       uint i;
-      Player *p = this;
+      Player *p = &this;
 
       pl = &(p.troopt[ty-D][0]);		// point to row
       for (i = 5; i--;)
@@ -3648,7 +3649,7 @@ struct Player
 	    numdes = 0,			// number destroyed
 	    nummax = u.hit;		// max # allowed
         int i;
-        Player *p = this;
+        Player *p = &this;
         Display *d = p.display;
 
         if (type == T)			// if troop transport
@@ -3825,7 +3826,7 @@ struct Player
     {   static int[] dirtab = ['D','E','W','Q','A','Z','X','C'];
         static int[] dirtab2 = [77*256,73*256,72*256,71*256,	// scan codes
 			      75*256,79*256,80*256,81*256];
-      Player *p = this;
+      Player *p = &this;
       Display *d = p.display;
 
       loc_t newloc;

@@ -19,6 +19,9 @@ import core.stdc.stdlib;
 import core.stdc.stdio : sprintf;
 import core.stdc.string : memset, strcat;
 import core.stdc.time;
+import core.sys.windows.windows : InvalidateRect, FALSE;
+import core.thread : Thread;
+import core.time : dur;
 
 import empire;
 import eplayer;
@@ -517,10 +520,10 @@ struct Display
     {
 	Text *t = &text;
 	if (t.watch)
-	{   char *p;
+	{   const(char)* p;
 
 	    t.curs(text.DS(2));
-	    p = text.narrow ? "Yr" : "Your";
+	    p = text.narrow ? "Yr".ptr : "Your".ptr;
 	    t.vsmes("%s %s is under attack at %u,%u.",
 		p,nmes_p(u.typ,1),ROW(u.loc),COL(u.loc));
 	    t.deleol();
@@ -539,8 +542,8 @@ struct Display
 
     void battle(Player *p,Unit *uwin,Unit *ulos)
     {
-	char* p1;
-	char* p2;
+	const(char)* p1;
+	const(char)* p2;
 	Text* t = &text;
 
 	if (t.watch)
@@ -585,15 +588,15 @@ struct Display
     /*************************************
      */
 
-    char *youene_p(Player *p,int num)
+    const(char)* youene_p(Player *p,int num)
     {
 	if (p.num == num)
 	{
-	    return text.narrow ? "Yr " : "Your ";
+	    return text.narrow ? "Yr ".ptr : "Your ".ptr;
 	}
 	else
 	{
-	    return text.narrow ? "En " : "Enemy ";
+	    return text.narrow ? "En ".ptr : "Enemy ".ptr;
 	}
     }
 
@@ -639,10 +642,10 @@ struct Display
     {
 	Text *t = &text;
 	if (t.watch)
-	{   char *p;
+	{   const(char)* p;
 
 	    t.curs(text.DS(0));
-	    p = (c.phs == A || c.phs == C) ? "n" : "";
+	    p = (c.phs == A || c.phs == C) ? "n".ptr : "".ptr;
 	    t.vsmes("City at %u,%u has completed a%s %s.",
 		    ROW(c.loc),COL(c.loc),p,nmes_p(c.phs,1));
 	    t.imes("\1\2");
@@ -839,7 +842,7 @@ struct Display
       t.curs(text.DS(3));
       if (!text.narrow)
 	    t.smes("Valid commands: ");
-      t.smes(valmsg[mode]);
+      t.smes(valmsg[mode].ptr);
       t.deleol();
       sound_error();
     }
@@ -859,7 +862,7 @@ struct Display
 	if (d.text.watch)
 	{   d.text.flush();
 	    if (d.timeinterval)
-		sleep(n * d.timeinterval);
+		Thread.sleep(dur!"msecs"(n * d.timeinterval * 10));
 	}
     }
 
