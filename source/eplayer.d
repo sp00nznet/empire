@@ -3551,23 +3551,23 @@ struct Player
 	    s = buf.ptr;
 	}
 
-	// All 11 players on row 0
-	// Players 1-9: 4 chars each "N:RR" (36 chars, cols 0-35)
-	// Players 10-11: 5 chars each "NN:RR" (10 chars, cols 36-45)
+	// All 11 players on row 0 with spacing
+	// Players 1-9: 5 chars each "N:RR " (45 chars, cols 0-44)
+	// Players 10-11: 6 chars each "NN:RR " (12 chars, cols 45-56)
 	// POV player marked with asterisk instead of colon
 	int col;
-	char[8] outbuf;
+	char[12] outbuf;
 	int width;
 
 	if (i <= 9)
 	{
-	    col = (i - 1) * 4;
-	    width = 4;
+	    col = (i - 1) * 5;
+	    width = 5;
 	}
 	else
 	{
-	    col = 36 + (i - 10) * 5;
-	    width = 5;
+	    col = 45 + (i - 10) * 6;
+	    width = 6;
 	}
 	t.curs(col);  // row 0, column varies
 
@@ -3575,9 +3575,9 @@ struct Player
 	if (p == &this)		// Current POV player - mark with asterisk
 	{
 	    if (p.human)
-		sprintf(outbuf.ptr, "*Y%s", s);
+		sprintf(outbuf.ptr, "*Y:%s", s);
 	    else
-		sprintf(outbuf.ptr, "*%d%s", i, s);
+		sprintf(outbuf.ptr, "*%d:%s", i, s);
 	}
 	else
 	{

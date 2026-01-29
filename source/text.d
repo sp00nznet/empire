@@ -417,7 +417,7 @@ struct Text
       if (narrow)           // if 40 column display
             return (row << 8) + 0;
       else
-            return (row << 8) + 50;  // Start messages at col 50 to leave space after 11 players
+            return (row << 8) + 60;  // Start messages on right side of screen
     }
 
 
