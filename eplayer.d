@@ -16,6 +16,8 @@
 
 module eplayer;
 
+import core.stdc.stdio : sprintf;
+
 import empire;
 import display;
 import path;
@@ -3463,7 +3465,7 @@ struct Player
 	body
 	{   int dummy;
 
-	    return pathn(beg,end,1,okblk,&dummy);
+	    return pathn(beg,end,1,okblk.ptr,&dummy);
 	}
 
     int patcnt(loc_t beg,loc_t end)
@@ -3475,7 +3477,7 @@ struct Player
 	body
 	{   int dummy;
 
-	    return pathn(beg,end,1,okcnt,&dummy);
+	    return pathn(beg,end,1,okcnt.ptr,&dummy);
 	}
 
     int patlnd(loc_t beg,loc_t end)
@@ -3487,7 +3489,7 @@ struct Player
 	body
 	{   int dummy;
 
-	    return pathn(beg,end,1,oklnd,&dummy);
+	    return pathn(beg,end,1,oklnd.ptr,&dummy);
 	}
 
     int patsea(loc_t beg,loc_t end)
@@ -3499,7 +3501,7 @@ struct Player
 	body
 	{   int dummy;
 
-	    return pathn(beg,end,1,oksea,&dummy);
+	    return pathn(beg,end,1,oksea.ptr,&dummy);
 	}
 
     int patho(loc_t beg,loc_t end,int dir,byte *ok,dir_t *pr2)
@@ -3510,7 +3512,7 @@ struct Player
 	}
 	body
 	{
-	    return path.path(this,beg,end,dir,ok,pr2,true);
+	    return path.path(&this,beg,end,dir,ok,pr2,true);
 	}
 
     int pathn(loc_t beg,loc_t end,int dir,byte *ok,dir_t *pr2)
@@ -3521,7 +3523,7 @@ struct Player
 	}
 	body
 	{
-	    return path.path(this,beg,end,dir,ok,pr2,false);
+	    return path.path(&this,beg,end,dir,ok,pr2,false);
 	}
 
     // Notify player that things have happened
@@ -3536,7 +3538,7 @@ struct Player
     {   int plysave;
 	int i;
 	int co40;
-	char *s;
+	const(char)* s;
 	char[r.sizeof * 3 + 1] buf;
 	Text *t = &display.text;
 
@@ -3550,11 +3552,11 @@ struct Player
 	    return;
 
 	if (p.defeat)
-	    s = "lost";
+	    s = "lost".ptr;
 	else
 	{
-	    sprintf(buf,"%d",r);
-	    s = buf;
+	    core.stdc.stdio.sprintf(buf.ptr,"%d",r);
+	    s = buf.ptr;
 	}
 
 	if (r <= 1 || co40 || watch == DAwindows)
@@ -3564,7 +3566,7 @@ struct Player
 	    else
 		t.curs((i - 1) << 8);
 
-	    if (p == this)		// if it's this player
+	    if (p == &this)		// if it's this player
 	    {   if (co40)
 		    t.vsmes("Yr: %s",s);
 		else
@@ -3591,7 +3593,7 @@ struct Player
 
     void notify_defeated(Player *p)
     {
-	if (p == this)			// if this means you
+	if (p == &this)			// if this means you
 	    display.lost();		// then you lost
 	else
 	    display.plyrcrushed(p);	// someone else lost
@@ -3709,7 +3711,7 @@ struct Player
 	type += 5 + 10 * (num - 1);		// offset to army
 	if (ac == MAPsea)			// if moving onto sea
 	    type++;				// offset for two Fs
-	.map[loc] = type;			// update reference map
+	.map[loc] = cast(ubyte)type;		// update reference map
     }
 
     void killit(Unit *u)		// kill the unit
@@ -3772,7 +3774,7 @@ struct Player
 		    Hwin = Hdef;
 
 		    pwin = pdef;
-		    plos = this;
+		    plos = &this;
 		    break;
 		}
 	    }
@@ -3783,14 +3785,14 @@ struct Player
 		    ulos = udef;
 		    Hwin = Hatt;
 
-		    pwin = this;
+		    pwin = &this;
 		    plos = pdef;
 		    break;
 		}
 	    }
       }
       if (uwin.typ >= D)
-	    uwin.hit = Hwin;
+	    uwin.hit = cast(ubyte)Hwin;
 
 	pdef.display.underattack(udef);
 
@@ -3890,7 +3892,7 @@ struct Player
     {   Display *d;
 	int w;
 
-	if (p != this)
+	if (p !is &this)
 	{
 	    d = display;
 	    display = p.display;
@@ -3898,11 +3900,11 @@ struct Player
 
 	    w = watch;
 	    watch = p.watch;
-	    p.watch = w;
+	    p.watch = cast(ubyte)w;
 
 	    w = secflg;
 	    secflg = p.secflg;
-	    p.secflg = w;
+	    p.secflg = cast(ubyte)w;
 
 	    repaint();
 	    p.repaint();

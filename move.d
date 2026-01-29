@@ -17,9 +17,12 @@
 
 module move;
 
+import core.stdc.string : memset;
+
 import empire;
 import eplayer;
 import sub2;
+import var;
 
 const int HYSTERESIS = 10;
 
