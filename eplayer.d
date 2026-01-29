@@ -564,6 +564,7 @@ struct Player
         City *c;
         Player *p = &this;
 
+        winmain.debugWrite("citsel: entering loop to find city");
         do
         {   n = empire.random(CITMAX);	// select a city at random
 	    c = &city[n];
@@ -572,13 +573,24 @@ struct Player
         while (!loc ||			// if city doesn't exist or
 	    edger(loc) == 8 ||		// island city or
 	    c.own);			// already owned
+        winmain.debugWrite("citsel: city found, claiming");
         c.own = cast(ubyte)p.num;		// claim the city
         .map[loc] = cast(ubyte)(4 + (p.num - 1) * 10);	// set map value
+        winmain.debugWrite("citsel: calling sensor");
         p.sensor(loc);			// do a sensor probe
+        winmain.debugWrite("citsel: sensor done");
         if (p.human)			// if human player
+        {
+	    winmain.debugWrite("citsel: human player, calling phasin");
 	    p.phasin(c);		// get city phase
+	    winmain.debugWrite("citsel: phasin done");
+        }
         else				// else computer player
+        {
+	    winmain.debugWrite("citsel: computer player, calling cphasin");
 	    p.cphasin(c);
+	    winmain.debugWrite("citsel: cphasin done");
+        }
     }
 
 
