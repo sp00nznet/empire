@@ -3585,32 +3585,46 @@ struct Player
 	    s = buf.ptr;
 	}
 
-	// All players on row 0, 6 chars each: "1:123 " or "*1:12 "
-	// 11 players × 6 chars = 66 chars, fits in 80 col display
-	int col;
-	if (i <= 9)
-	    col = (i - 1) * 6;
+	// Display players on rows 0-1
+	// Row 0: players 1-6
+	// Row 1: players 7-11
+	// Each slot is 7 characters wide
+	int row, col;
+	char[16] outbuf;
+
+	if (i <= 6)
+	{
+	    row = 0;
+	    col = (i - 1) * 7;
+	}
 	else
-	    col = 9 * 6 + (i - 10) * 7;  // 10 and 11 need extra char
+	{
+	    row = 1;
+	    col = (i - 7) * 7;
+	}
 
-	t.curs(col);  // row 0, column varies
+	t.curs((row << 8) + col);  // position cursor
 
-	if (p == &this)		// Current POV player
+	// Format with 7 chars per slot
+	if (p == &this)		// Current POV player - mark with asterisk
 	{
 	    if (p.human)
-		t.vsmes("*Y:%s ",s);
+		sprintf(outbuf.ptr, "*Y:%-3s ", s);  // 7 chars
 	    else if (i <= 9)
-		t.vsmes("*%d:%s ",i,s);
+		sprintf(outbuf.ptr, "*%d:%-3s ", i, s);  // 7 chars for 1-9
 	    else
-		t.vsmes("*%d:%s ",i,s);
+		sprintf(outbuf.ptr, "*%d:%-2s ", i, s);  // 7 chars for 10-11
 	}
 	else
 	{
 	    if (i <= 9)
-		t.vsmes("%d:%s ",i,s);
+		sprintf(outbuf.ptr, "%d:%-4s ", i, s);  // 7 chars for 1-9
 	    else
-		t.vsmes("%d:%s ",i,s);
+		sprintf(outbuf.ptr, "%d:%-3s ", i, s);  // 7 chars for 10-11
 	}
+	// Ensure exactly 7 chars
+	outbuf[7] = 0;
+	t.smes(outbuf.ptr);
     }
 
     /**************************************
