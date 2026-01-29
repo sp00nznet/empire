@@ -698,7 +698,7 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                         int len = cast(int)strlen(vbuffer[i].ptr);
                         int splitCol = 68;  // Where action messages start
 
-                        if (i <= 1 && len > splitCol)
+                        if (len > splitCol)
                         {
                             // Render player stats (left side)
                             TextOutA(hdc, 0, global.cyChar * i, vbuffer[i].ptr, splitCol);
