@@ -638,6 +638,7 @@ else
 
 		// Declare these before the goto to avoid "goto skips declaration" error
 		int x1,y1,x2,y2;
+		int rmax, cmax;
 
 		if (clipbox.bottom < global.sector.top)
 		    goto LpaintText;
@@ -646,7 +647,6 @@ else
 
 		r = ROW(global.ulcorner);
 		c = COL(global.ulcorner);
-		int rmax, cmax;
 		dx = cast(int)(10 * global.scalex);
 		dy = cast(int)(10 * global.scaley);
 		rmax = r + (global.offsety + global.pixely + dy - 1) / dy;
