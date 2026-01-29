@@ -20,9 +20,9 @@
                 (c) Charles Petzold, 1992
   -----------------------------------------------------*/
 
-import std.c.windows.windows;
-import std.c.stdio;
-import std.c.stdlib;
+import core.sys.windows.windows;
+import core.stdc.stdio;
+import core.stdc.stdlib;
 import std.file;
 
 int min(int a, int b) { return (a < b) ? a : b; }

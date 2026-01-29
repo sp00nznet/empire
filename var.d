@@ -17,7 +17,7 @@
 
 module var;
 
-import std.c.stdio;
+import core.stdc.stdio;
 
 import empire;
 import eplayer;

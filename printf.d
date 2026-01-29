@@ -21,8 +21,8 @@
  * if the program subsequently crashes.
  */
 
-import std.c.stdio;
-import std.c.stdlib;
+import core.stdc.stdio;
+import core.stdc.stdlib;
 import std.string;
 import std.file;
 

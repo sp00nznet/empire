@@ -4,8 +4,8 @@
 // Compile with Digital Mars compiler www.digitalmars.com
 // www.classicempire.com
 
-import std.c.stdlib;
-import std.c.windows.windows;
+import core.stdc.stdlib;
+import core.sys.windows.windows;
 
 import empire;
 import winemp;

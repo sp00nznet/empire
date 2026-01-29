@@ -15,8 +15,8 @@
  */
 
 
-import std.c.stdlib;
-import std.c.time;
+import core.stdc.stdlib;
+import core.stdc.time;
 
 import empire;
 import eplayer;
