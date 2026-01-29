@@ -3586,9 +3586,9 @@ struct Player
 	    s = buf.ptr;
 	}
 
-	// All 11 players on row 0 with spacing
-	// Players 1-9: 5 chars each "N:RR " (45 chars, cols 0-44)
-	// Players 10-11: 6 chars each "NN:RR " (12 chars, cols 45-56)
+	// All 11 players on row 0 with good spacing
+	// Players 1-9: 6 chars each "N:RRR " (54 chars, cols 0-53)
+	// Players 10-11: 7 chars each "NN:RRR " (14 chars, cols 54-67)
 	// POV player marked with asterisk instead of colon
 	int col;
 	char[12] outbuf;
@@ -3596,13 +3596,13 @@ struct Player
 
 	if (i <= 9)
 	{
-	    col = (i - 1) * 5;
-	    width = 5;
+	    col = (i - 1) * 6;
+	    width = 6;
 	}
 	else
 	{
-	    col = 45 + (i - 10) * 6;
-	    width = 6;
+	    col = 54 + (i - 10) * 7;
+	    width = 7;
 	}
 	t.curs(col);  // row 0, column varies
 
