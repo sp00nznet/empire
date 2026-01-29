@@ -173,12 +173,22 @@ void chkwin()
 
 	if (numleft == 1)
 	{
-	    // Find the winner and display victory message
+	    // Find the winner
+	    int winner = 0;
 	    for (i = 1; i <= numply; i++)
 	    {
 		if (!Player.get(i).defeat)
 		{
-		    Player.get(i).display.won(i);
+		    winner = i;
+		    break;
+		}
+	    }
+	    // Display victory message on the watching player's display
+	    for (i = 1; i <= numply; i++)
+	    {
+		if (Player.get(i).watch)
+		{
+		    Player.get(i).display.won(winner);
 		    break;
 		}
 	    }

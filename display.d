@@ -646,7 +646,8 @@ struct Display
 	{
 	    t.cmes(text.DS(0),"\1");
 	    t.curs(text.DS(1));
-	    if (winner == 1)
+	    Player *pw = Player.get(winner);
+	    if (pw.human)
 		t.smes("You have achieved world domination!");
 	    else
 		t.vsmes("CPU %d has achieved world domination!", winner);
