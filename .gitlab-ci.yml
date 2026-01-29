@@ -1,0 +1,48 @@
+# GitLab CI/CD for Empire: Wargame of the Century
+# Windows build using LDC2 and DUB
+
+stages:
+  - build
+
+variables:
+  LDC_VERSION: "1.38.0"
+
+build-windows:
+  stage: build
+  tags:
+    - windows
+    - shared-windows
+  variables:
+    ErrorActionPreference: stop
+  before_script:
+    # Install Chocolatey if not present
+    - |
+      if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+      }
+    # Install LDC2 D compiler
+    - choco install ldc -y --version $LDC_VERSION
+    - $env:PATH = "C:\ProgramData\chocolatey\lib\ldc\tools\ldc2-$LDC_VERSION-windows-x64\bin;$env:PATH"
+    # Install DUB package manager (comes with LDC)
+    - ldc2 --version
+    - dub --version
+  script:
+    # Compile Windows resources
+    - rc /nologo /fo empire.res empire.rc
+    # Build release version
+    - dub build --build=release --compiler=ldc2
+  artifacts:
+    name: "empire-windows-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - empire.exe
+      - "*.bmp"
+      - "*.wav"
+      - help.txt
+    expire_in: 30 days
+  only:
+    - master
+    - main
+    - merge_requests
+    - tags
