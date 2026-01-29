@@ -1267,8 +1267,6 @@ void winSetup()
 	setran();
     }
 
-    Text *t = &player[0].display.text;
-
     //printf("Please wait seven days for creation of world...\n");
     selmap();			// read in map
     citini();			// init city variables
@@ -1321,10 +1319,6 @@ void winRestore()
     {
 	setran();		// seed random number generator
     }
-
-    Text *t = &player[0].display.text;
-
-    t.TTinit();
 
     for (plynum = 0; plynum <= numply; plynum++)
     {   Player *p = &player[plynum];
