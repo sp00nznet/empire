@@ -305,10 +305,10 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.text.left = 0;
 	    global.text.top = 0;
 	    global.text.right = global.pixelx;
-	    global.text.bottom = 80;
+	    global.text.bottom = 140;
 
 	    global.sector.left = 0;
-	    global.sector.top = 80;
+	    global.sector.top = 140;
 	    global.sector.right = global.pixelx;
 	    global.sector.bottom = global.sector.top + global.pixely;
 
@@ -363,8 +363,8 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 
 	    hdc = GetDC(hwnd);
 
-	    logfont.lfHeight = 16;
-	    logfont.lfWidth = 8;
+	    logfont.lfHeight = 32;
+	    logfont.lfWidth = 16;
 	    global.hFont = CreateFontIndirectA(&logfont);
 	    SelectObject(hdc, global.hFont);
 
@@ -393,7 +393,7 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 		global.scaley = global.scalex;
 	    }
 
-	    global.pixely = global.cyClient - 80;
+	    global.pixely = global.cyClient - 140;
 	    if (global.pixely < 120)
 		global.pixely = 120;
 	    // Clamp viewport to scaled map size
@@ -719,7 +719,7 @@ else
 
 		// Draw a rectangle around the map edge
 		x1 = -c * dx - global.offsetx;
-		y1 = 80 - r * dx - global.offsety;
+		y1 = 140 - r * dy - global.offsety;
 		x2 = x1 + (Mcolmx + 1) * dx - 1;
 		y2 = y1 + (Mrowmx + 1) * dy - 1;
 		global.hPen = CreatePen(PS_SOLID, dx/3+2, RGB(255, 0, 0));
@@ -762,14 +762,14 @@ else
 		    LineTo(hdc, x2, y2);
 
 		    x1 = cursorx;
-		    y1 = 80;
+		    y1 = 140;
 		    x2 = x1;
 		    y2 = cursory - dy/2;
 		    MoveToEx(hdc, x1, y1, null);
 		    LineTo(hdc, x2, y2);
 
 		    y1 = y2 + dy;
-		    y2 = 80 + global.pixely;
+		    y2 = 140 + global.pixely;
 		    MoveToEx(hdc, x1, y1, null);
 		    LineTo(hdc, x2, y2);
 
@@ -1577,7 +1577,7 @@ void invalidateLoc(loc_t loc)
     dy = cast(int)(10 * global.scaley);
 
     rect.left = c * dx - global.offsetx;
-    rect.top = 80 + r * dy - global.offsety;
+    rect.top = 140 + r * dy - global.offsety;
     rect.right = rect.left + dx;
     rect.bottom = rect.top + dy;
 
@@ -1625,7 +1625,7 @@ void invalidateLocRect(loc_t loc1, loc_t loc2)
     dy = cast(int)(10 * global.scaley);
 
     rect.left = c1 * dx - global.offsetx;
-    rect.top = 80 + r1 * dy - global.offsety;
+    rect.top = 140 + r1 * dy - global.offsety;
     rect.right = rect.left + dx * (c2 - c1 + 1);
     rect.bottom = rect.top + dy * (r2 - r1 + 1);
 
@@ -1665,7 +1665,7 @@ int LocToY(loc_t loc)
 
     row = ROW(loc) - ROW(global.ulcorner);
     dy = cast(int)(10 * global.scaley);
-    y = 80 + row * dy + dy / 2 - global.offsety;
+    y = 140 + row * dy + dy / 2 - global.offsety;
     return y;
 }
 
