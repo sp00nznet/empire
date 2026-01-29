@@ -17,6 +17,7 @@
 module eplayer;
 
 import core.stdc.stdio : sprintf;
+import core.stdc.string : strlen;
 
 import empire;
 import display;
