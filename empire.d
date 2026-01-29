@@ -63,7 +63,7 @@ const int UNIMAX	= 500;	// max number of units
 const int CITMAX	= 70;	// max number of cities
 const int MAPMAX	= (4 + PLYMAX * 10);	// number of map elements
 const int LOCMAX	= 10;	// size of loci array
-const int PLYMAX	= 6;	// number of players
+const int PLYMAX	= 11;	// number of players (1 human + up to 10 enemies)
 const int VERSION	= 1;	// version number
 const int NEW		= 1;	// new computer strategy
 

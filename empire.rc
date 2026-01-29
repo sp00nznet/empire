@@ -131,20 +131,25 @@ CitySelectBox DIALOG 20, 20, 134, 172
      PUSHBUTTON  "Cancel"       IDCANCEL,    12, 152,  40,  14, WS_GROUP
      }
 
-InitBox DIALOG 20, 20, 68, 116
+InitBox DIALOG 20, 20, 86, 136
      STYLE WS_POPUP | WS_DLGFRAME
      {
-     CTEXT       "New Game" -1,               4,   4,  58,   8
-     GROUPBOX    "Num Enemies"  -1,           4,  16,  58,  34
+     CTEXT       "New Game" -1,               4,   4,  78,   8
+     GROUPBOX    "Num Enemies"  -1,           4,  16,  78,  54
      RADIOBUTTON "&0"           IDD_ONE,      8,  26,  16,  12, TABGRP
-     RADIOBUTTON "&1"           IDD_TWO,      26, 26, 16,  12
-     RADIOBUTTON "&2"           IDD_THREE,    44, 26, 16,  12
-     RADIOBUTTON "&3"           IDD_FOUR,     8,  36, 16,  12
-     RADIOBUTTON "&4"           IDD_FIVE,     26, 36, 16,  12
-     RADIOBUTTON "&5"           IDD_SIX,      44, 36, 16,  12
-     RADIOBUTTON "&Demo"        IDD_DEMO,     20, 58,  48,  12,	WS_GROUP
-     DEFPUSHBUTTON "OK"         IDOK,         14, 76,  40,  14, WS_GROUP
-     PUSHBUTTON  "Cancel"       IDCANCEL,     14, 96,  40,  14, WS_GROUP
+     RADIOBUTTON "&1"           IDD_TWO,      26, 26,  16,  12
+     RADIOBUTTON "&2"           IDD_THREE,    44, 26,  16,  12
+     RADIOBUTTON "&3"           IDD_FOUR,     62, 26,  16,  12
+     RADIOBUTTON "&4"           IDD_FIVE,     8,  38,  16,  12
+     RADIOBUTTON "&5"           IDD_SIX,      26, 38,  16,  12
+     RADIOBUTTON "&6"           IDD_SEVEN,    44, 38,  16,  12
+     RADIOBUTTON "&7"           IDD_EIGHT,    62, 38,  16,  12
+     RADIOBUTTON "&8"           IDD_NINE,     8,  50,  16,  12
+     RADIOBUTTON "&9"           IDD_TEN,      26, 50,  16,  12
+     RADIOBUTTON "1&0"          IDD_ELEVEN,   44, 50,  20,  12
+     RADIOBUTTON "&Demo"        IDD_DEMO,     20, 78,  48,  12,	WS_GROUP
+     DEFPUSHBUTTON "OK"         IDOK,         23, 96,  40,  14, WS_GROUP
+     PUSHBUTTON  "Cancel"       IDCANCEL,     23, 116, 40,  14, WS_GROUP
      }
 
 PopMenu MENU

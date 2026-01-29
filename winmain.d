@@ -1139,7 +1139,7 @@ extern (Windows) LRESULT InitDlgProc (HWND hDlg, uint message, WPARAM wParam,
         case WM_INITDIALOG:
 
 	    global.newnumplayers = global.numplayers;
-	    CheckRadioButton(hDlg, IDD_ONE, IDD_SIX, global.newnumplayers);
+	    CheckRadioButton(hDlg, IDD_ONE, IDD_ELEVEN, global.newnumplayers);
 	    if (global.demo)
 		CheckRadioButton(hDlg, IDD_DEMO, IDD_DEMO, IDD_DEMO);
 	    SetFocus(GetDlgItem(hDlg, global.newnumplayers));
@@ -1163,8 +1163,13 @@ extern (Windows) LRESULT InitDlgProc (HWND hDlg, uint message, WPARAM wParam,
 		case IDD_FOUR:
 		case IDD_FIVE:
 		case IDD_SIX:
+		case IDD_SEVEN:
+		case IDD_EIGHT:
+		case IDD_NINE:
+		case IDD_TEN:
+		case IDD_ELEVEN:
 		    global.newnumplayers = cast(int)wParam;
-		    CheckRadioButton(hDlg, IDD_ONE, IDD_SIX, global.newnumplayers);
+		    CheckRadioButton(hDlg, IDD_ONE, IDD_ELEVEN, global.newnumplayers);
 		    return true;
 
 		case IDD_DEMO:
@@ -1211,86 +1216,84 @@ void sound_gun()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("gun_1.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("gun_1.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_bang()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-    {	PlaySoundA("explosi1.wav", null, SND_SYNC | SND_FILENAME);
-	PlaySoundA("bubbles.wav", null, SND_SYNC | SND_FILENAME);
-    }
+	PlaySoundA("explosi1.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_error()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("error.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("error.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_splash()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("splash.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("splash.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_aground()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("bubbles.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("bubbles.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_subjugate()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("machine1.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("machine1.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_crushed()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("gun_3.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("gun_3.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_flyby()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("flyby.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("flyby.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_fcrash()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("explode.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("explode.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_fuel()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("fuel.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("fuel.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_taps()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("taps.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("taps.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 void sound_ackack()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("ackack1.wav", null, SND_SYNC | SND_FILENAME);
+	PlaySoundA("ackack1.wav", null, SND_ASYNC | SND_FILENAME);
 }
 
 /***********************************
