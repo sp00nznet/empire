@@ -47,13 +47,17 @@ build-windows:
     - ldc2 --version
     - dub --version
   script:
+    # Clean cached build artifacts to ensure fresh build
+    - Remove-Item -Path ".dub" -Recurse -Force -ErrorAction SilentlyContinue
+    - Remove-Item -Path "empire.res" -Force -ErrorAction SilentlyContinue
+    - Remove-Item -Path "empire.exe" -Force -ErrorAction SilentlyContinue
     # Compile Windows resources (pass each include path separately)
     - |
       $sdkBase = "C:\Program Files (x86)\Windows Kits\10"
       $sdkVersion = (Get-ChildItem "$sdkBase\Include" | Select-Object -Last 1).Name
       rc /nologo /i "$sdkBase\Include\$sdkVersion\um" /i "$sdkBase\Include\$sdkVersion\shared" /fo empire.res empire.rc
     # Build release version
-    - dub build --build=release --compiler=ldc2
+    - dub build --build=release --compiler=ldc2 --force
   artifacts:
     name: "empire-windows-$CI_COMMIT_SHORT_SHA"
     paths:
