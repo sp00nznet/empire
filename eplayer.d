@@ -3580,7 +3580,7 @@ struct Player
 	i = p.num;
 
 	if (p.defeat)
-	    s = "lost".ptr;
+	    s = "X".ptr;  // X for defeated
 	else
 	{
 	    sprintf(buf.ptr,"%d",r);
@@ -3589,50 +3589,26 @@ struct Player
 
 	if (r <= 1 || co40 || watch == DAwindows)
 	{
-	    // Position 0 (top-left) is always the current POV player
-	    // Other players fill positions 1, 2, 3, etc.
-	    int pos;
-	    if (p == &this)
-		pos = 0;  // Current POV player always at top-left
-	    else
-	    {
-		// Calculate position for other players, skipping position 0
-		pos = (i < num) ? i : i - 1;
-		if (pos < 1) pos = 1;
-	    }
-
-	    int row = pos / 4;
-	    int col = (pos % 4) * 20;  // 20 chars per player slot
-	    if (row > 2)
-		row = 2;  // clamp to row 2 max for stats display
-	    t.curs((row << 8) + col);
+	    // All players on row 0, compact format: *1:42 2:38 3:41 ...
+	    // POV player marked with *, 7 chars per player slot
+	    int col = (i - 1) * 7;
+	    t.curs(col);  // row 0
 
 	    if (p == &this)		// Current POV player
 	    {
 		if (p.human)
-		    t.vsmes("You:%s",s);
+		    t.vsmes("*Y:%s ",s);
 		else
-		    t.vsmes("*CPU%d:%s",i,s);  // * indicates current POV
+		    t.vsmes("*%d:%s ",i,s);  // * indicates current POV
 	    }
 	    else
-		t.vsmes("CPU%d:%s",i,s);
+		t.vsmes("%d:%s ",i,s);
 	}
 	else
 	{
-	    int pos;
-	    if (p == &this)
-		pos = 0;
-	    else
-	    {
-		pos = (i < num) ? i : i - 1;
-		if (pos < 1) pos = 1;
-	    }
-	    int row = pos / 4;
-	    int col = (pos % 4) * 20 + 8;
-	    if (row > 2)
-		row = 2;
-	    t.curs((row << 8) + col);
-	    t.vsmes(s);
+	    int col = (i - 1) * 7 + 2;
+	    t.curs(col);
+	    t.vsmes("%s ",s);
 	}
     }
 
