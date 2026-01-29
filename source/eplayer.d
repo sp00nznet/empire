@@ -56,23 +56,23 @@ struct Player
     int modsave;
 
     // Computer strategy
-    ubyte target[CITMAX];	// There is a TARGET byte for each city.
+    ubyte[CITMAX] target;	// There is a TARGET byte for each city.
 				// If the computer knows about the city
 				// but doesn't own it, it is true.
 
-    uint troopt[6][5];		// The 6 rows correspond to the ships
+    uint[5][6] troopt;		// The 6 rows correspond to the ships
 				// DTSRCB in that order. The 5 columns
 				// correspond to locations of enemy ships
 				// discovered, in order from newest to
 				// oldest sighting.
 
-    uint loci[LOCMAX];		// Locations of enemy armies sighted,
+    uint[LOCMAX] loci;		// Locations of enemy armies sighted,
 				// from most to least recent.
 
-    uint numuni[TYPMAX];	// # of units of each type
+    uint[TYPMAX] numuni;	// # of units of each type
     uint numown;		// # of our owned cities
     uint numtar;		// # of cities listed as targets
-    uint numphs[TYPMAX];	// # of cities producing each type of unit
+    uint[TYPMAX] numphs;	// # of cities producing each type of unit
 
     /*************************************
      * Give time slice to a player.
@@ -479,7 +479,7 @@ struct Player
      * for him also.
      */
 
-    static int dirtab[9] = [3,2,1,4,-1,0,5,6,7];	// to minimize chars
+    static int[9] dirtab = [3,2,1,4,-1,0,5,6,7];	// to minimize chars
 							// sent to screen
     void sensor(loc_t loc)
     {
@@ -1096,7 +1096,7 @@ struct Player
      */
 
     void setmode(int newmod)
-    {   static char *modmsg[] =
+    {   static char*[] modmsg =
 	[	"         \1",
 	    "Move     \1",
 	    "Survey   \1",
@@ -2026,9 +2026,9 @@ struct Player
     int locs(Unit *u,loc_t toloc)
     {   int r2,flag;
 
-	static byte lp[PLYMAX][MAPMAX];	// move on land for armies
-	static byte ap[PLYMAX][MAPMAX];	// move on sea for fighters
-	static byte sp[PLYMAX][MAPMAX];	// move on sea for ships
+	static byte[MAPMAX][PLYMAX] lp;	// move on land for armies
+	static byte[MAPMAX][PLYMAX] ap;	// move on sea for fighters
+	static byte[MAPMAX][PLYMAX] sp;	// move on sea for ships
 	static int inited;
 
 	if (u.loc == toloc)		// if at destination
@@ -2731,7 +2731,7 @@ struct Player
 
     void SHIPco(Unit *u,dir_t *pr2)
     {   int msknum;
-      static int attmsk[6] =
+      static int[6] attmsk =
       [	mF|mD|mT|mS,			// D:.FDT S...
 	    0,				// T:.... ....
 	    mD|mT|mS|mR|mC|mB,		// S:..DT SRCB
@@ -2739,7 +2739,7 @@ struct Player
 	    mD|mT|mC,			// C:..DT ..C.
 	    mF|mD|mT|mS|mR|mC|mB		// B:.FDT SRCB
       ];
-      static int escmsk[6] =
+      static int[6] escmsk =
       [	mA|mR|mC|mB,			// D:A... .RCB
 	    mA|mF|mD|mS|mR|mC|mB,		// T:AFD. SRCB
 	    mA|mF,				// S:AF.. ....
@@ -2959,7 +2959,7 @@ struct Player
     int shiptr(Unit *u)
     {   uint loc,tloc,min,dt,i,j,mask;
 	Player *p = this;
-	static uint nshprf[6] =		// which rows to look at
+	static uint[6] nshprf =		// which rows to look at
 	[   mD|mT|mS,			// D: DT S...
 	    mT,				// T: .T ....
 	    mD|mT|mS,			// S: DT S...
@@ -3826,8 +3826,8 @@ struct Player
      */
 
     int cmdcur(loc_t *ploc,uint cmd,dir_t *pr2)
-    {   static int dirtab[] = ['D','E','W','Q','A','Z','X','C'];
-        static int dirtab2[] = [77*256,73*256,72*256,71*256,	// scan codes
+    {   static int[] dirtab = ['D','E','W','Q','A','Z','X','C'];
+        static int[] dirtab2 = [77*256,73*256,72*256,71*256,	// scan codes
 			      75*256,79*256,80*256,81*256];
       Player *p = this;
       Display *d = p.display;
