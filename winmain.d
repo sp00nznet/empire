@@ -6,6 +6,7 @@
 
 import core.stdc.stdio : FILE, fopen;
 import core.stdc.stdlib;
+import core.stdc.string : strlen;
 import core.sys.windows.windows;
 
 import empire;
@@ -17,6 +18,7 @@ import init;
 import move;
 import var;
 import mapdata;
+import text;
 
 enum _MAX_PATH = 260;
 enum _MAX_FNAME = 256;
@@ -213,7 +215,7 @@ else
     return cast(int)msg.wParam;
 }
 
-void DrawBitmap(HDC hdc, short xStart, short yStart, HBITMAP hBitmap, double scalex, double scaley, DWORD mode)
+void DrawBitmap(HDC hdc, int xStart, int yStart, HBITMAP hBitmap, double scalex, double scaley, DWORD mode)
 {
     // Petzold pg. 631 has a different version
 
@@ -318,9 +320,9 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.ofn.lStructSize       = OPENFILENAMEA.sizeof;
 	    global.ofn.hwndOwner         = hwnd;
 	    global.ofn.lpstrFilter       = szFilter[0];
-	    global.ofn.lpstrFile         = szFileName;
+	    global.ofn.lpstrFile         = szFileName.ptr;
 	    global.ofn.nMaxFile          = _MAX_PATH;
-	    global.ofn.lpstrFileTitle    = szTitleName;
+	    global.ofn.lpstrFileTitle    = szTitleName.ptr;
 	    global.ofn.nMaxFileTitle     = _MAX_FNAME + _MAX_EXT;
 	    global.ofn.lpstrDefExt       = "emp";
 
@@ -521,12 +523,12 @@ version(none)
 		    break;
 
 		default:
-		    ch = wParam;
+		    ch = cast(int)wParam;
 		Linsert:
 		    // Insert into buffer of player we are watching
 		    Player *p;
 
-		    for (int i = 1; i <= numply; i++)
+		    for (i = 1; i <= numply; i++)
 		    {
 			p = Player.get(i);
 			if (p.watch)
@@ -705,7 +707,6 @@ else
 		// Do the survey mode graphic
 		if (global.player && global.player.mode == mdSURV)
 		{   HPEN hPen;
-		    int x1,y1,x2,y2;
 		    int cursorx, cursory;
 
 		    hPen = CreatePen(PS_DASH, 0, RGB(255, 255, 255));
@@ -744,7 +745,6 @@ else
 		// Do the direction mode graphic
 		if (global.player && global.player.mode == mdDIR)
 		{   HPEN hPen;
-		    int x1,y1,x2,y2;
 		    int cursorx, cursory;
 
 		    hPen = CreatePen(PS_DASH, 0, RGB(255, 255, 255));
@@ -821,7 +821,6 @@ else
 		// Do the move mode graphic
 		if (global.player && global.player.mode == mdTO)
 		{   HPEN hPen;
-		    int x1,y1,x2,y2;
 
 		    hPen = CreatePen(PS_DASH, 0, RGB(255, 255, 255));
 		    x1 = LocToX(global.player.frmloc);
@@ -871,7 +870,7 @@ else
 		    SelectObject(hdc, global.hFont);
 		    for (i = 0; i < 4; i++)
 		    {
-			TextOutA(hdc, 0, global.cyChar * i, vbuffer[i], strlen(vbuffer[i]));
+			TextOutA(hdc, 0, global.cyChar * i, text.vbuffer[i].ptr, cast(int)strlen(text.vbuffer[i].ptr));
 		    }
 		}
 	    }
