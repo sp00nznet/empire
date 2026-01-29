@@ -3578,8 +3578,6 @@ struct Player
 	    return;
 	co40 = t.narrow;
 	i = p.num;
-	if (i >= 6)
-	    return;
 
 	if (p.defeat)
 	    s = "lost".ptr;
@@ -3591,27 +3589,26 @@ struct Player
 
 	if (r <= 1 || co40 || watch == DAwindows)
 	{
-	    if (co40)
-		t.curs(0x400 + i * 10);
-	    else
-		t.curs((i - 1) << 8);
+	    // Position based on player number - fit multiple per row
+	    // Row 0: players 1-4, Row 1: players 5-8, Row 2: players 9-11
+	    int row = (i - 1) / 4;
+	    int col = ((i - 1) % 4) * 20;  // 20 chars per player slot
+	    if (row > 2)
+		row = 2;  // clamp to row 2 max for stats display
+	    t.curs((row << 8) + col);
 
 	    if (p == &this)		// if it's this player
-	    {   if (co40)
-		    t.vsmes("Yr: %s",s);
-		else
-		    t.vsmes("Your  : %s",s);
-	    }
+		t.vsmes("You:%s",s);
 	    else
-	    {   if (co40)
-		    t.vsmes("P%d: %s",i,s);
-		else
-		    t.vsmes("Plyr %d: %s",i,s);
-	    }
+		t.vsmes("CPU%d:%s",i,s);
 	}
 	else
 	{
-	    t.curs(((i - 1) << 8) + 8);
+	    int row = (i - 1) / 4;
+	    int col = ((i - 1) % 4) * 20 + 5;
+	    if (row > 2)
+		row = 2;
+	    t.curs((row << 8) + col);
 	    t.vsmes(s);
 	}
     }
