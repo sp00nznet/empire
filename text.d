@@ -19,6 +19,7 @@ module text;
 
 import core.stdc.stdio;
 import core.stdc.ctype;
+import core.stdc.stdarg;
 
 import empire;
 import printf;
@@ -316,7 +317,10 @@ struct Text
     {   char[100] buffer;
 	int count;
 
-	count = _vsnprintf(buffer.ptr,buffer.sizeof,format,cast(char*)(&format + 1));
+	va_list args;
+	va_start(args, format);
+	count = vsnprintf(buffer.ptr, buffer.sizeof, format, args);
+	va_end(args);
 	smes(buffer.ptr);
     }
 
