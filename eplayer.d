@@ -1411,18 +1411,30 @@ struct Player
     {   loc_t loc;
 	int ab,i;
 	Player *p = &this;
+	winmain.debugWrite("phasin: getting display");
 	Display *d = p.display;
+	winmain.debugWrite("phasin: getting text");
 	Text *t = &d.text;
 
+	winmain.debugWrite("phasin: getting city location");
 	loc = c.loc;				// city location
+	winmain.debugWrite("phasin: checking insect");
 	if (!d.insect(loc,2))		// if not in current sector
+	{
+	    winmain.debugWrite("phasin: calling center");
 	    center(loc);			// center sector about city
+	}
+	winmain.debugWrite("phasin: calling typcit");
 	typcit(p,c);				// type out data on city
 	version (Windows)
 	{
+	    winmain.debugWrite("phasin: calling pcur");
 	    d.pcur(loc);				// position cursor
+	    winmain.debugWrite("phasin: calling flush");
 	    t.flush();
+	    winmain.debugWrite("phasin: calling dialogCitySelect");
 	    i = dialogCitySelect(c.phs);
+	    winmain.debugWrite("phasin: dialogCitySelect returned");
 	    ab = typx[i].unichr;
 	}
 	else
