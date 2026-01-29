@@ -635,6 +635,10 @@ else
 		GetClipBox(hdc, &clipbox);
 		//PRINTF("sector : %2d,%2d %2d,%2d\n", global.sector.left, global.sector.top, global.sector.right, global.sector.bottom);
 		//PRINTF("clipbox: %2d,%2d %2d,%2d\n", clipbox.left, clipbox.top, clipbox.right, clipbox.bottom);
+
+		// Declare these before the goto to avoid "goto skips declaration" error
+		int x1,y1,x2,y2;
+
 		if (clipbox.bottom < global.sector.top)
 		    goto LpaintText;
 
@@ -685,7 +689,6 @@ else
 		}
 
 		// Draw a rectangle around the map edge
-		int x1,y1,x2,y2;
 		x1 = -c * dx - global.offsetx;
 		y1 = 40 - r * dx - global.offsety;
 		x2 = x1 + (Mcolmx + 1) * dx - 1;
@@ -930,6 +933,9 @@ extern (Windows) BOOL AboutDlgProc (HWND hDlg, uint message, uint wParam,
 		case IDCANCEL:
                     EndDialog (hDlg, 0) ;
 		    return true ;
+
+		default:
+		    break;
             }
             break ;
 
@@ -1128,7 +1134,7 @@ extern (Windows) LRESULT InitDlgProc (HWND hDlg, uint message, WPARAM wParam,
 		case IDD_FOUR:
 		case IDD_FIVE:
 		case IDD_SIX:
-		    global.newnumplayers = wParam;
+		    global.newnumplayers = cast(int)wParam;
 		    CheckRadioButton(hDlg, IDD_ONE, IDD_SIX, global.newnumplayers);
 		    return true;
 
@@ -1289,7 +1295,7 @@ void winSetup()
 	d.initialize();
 
 	p.num = plynum;
-	p.map = (plynum == 0) ? .map : cast(ubyte *)calloc(MAPSIZE,1);
+	p.map = (plynum == 0) ? var.map.ptr : cast(ubyte *)calloc(MAPSIZE,1);
 	p.human = (plynum == 1 && !global.demo);
 	p.watch = DAnone;
 
