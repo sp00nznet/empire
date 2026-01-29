@@ -16,6 +16,7 @@
 
 
 import std.string;
+import core.stdc.string : memset;
 
 import empire;
 import mapdata;
@@ -79,7 +80,7 @@ int selmap()
 	    assert(0);
 	}
 	while (n-- >= 0)
-	    map[i--] = a;
+	    map[i--] = cast(ubyte)a;
 	d++;
     }
     if (ranq() & 4) flip();
@@ -99,7 +100,7 @@ void flip()
   while (i--)
   {	c = map[j];
 	map[j++] = map[i];
-	map[i] = c;
+	map[i] = cast(ubyte)c;
   }
 }
 
@@ -117,7 +118,7 @@ void klip()
 	while (i--)
 	{   c = map[row + j];
 	    map[row + j++] = map[row + i];
-	    map[row + i] = c;
+	    map[row + i] = cast(ubyte)c;
 	}
 	row += Mcolmx + 1;
   }
