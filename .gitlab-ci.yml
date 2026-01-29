@@ -28,22 +28,29 @@ build-windows:
     - choco install windows-sdk-10-version-2004-windbg -y
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - refreshenv
-    # Find and add Windows SDK rc.exe to PATH
+    # Find and configure Windows SDK paths
     - |
-      $sdkPath = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\rc.exe" -ErrorAction SilentlyContinue | Select-Object -Last 1
+      $sdkBase = "C:\Program Files (x86)\Windows Kits\10"
+      $sdkPath = Get-ChildItem "$sdkBase\bin\*\x64\rc.exe" -ErrorAction SilentlyContinue | Select-Object -Last 1
       if ($sdkPath) {
+        $sdkVersion = $sdkPath.Directory.Parent.Name
         $env:PATH = "$($sdkPath.DirectoryName);$env:PATH"
-        Write-Host "Added Windows SDK to PATH: $($sdkPath.DirectoryName)"
+        $env:INCLUDE = "$sdkBase\Include\$sdkVersion\um;$sdkBase\Include\$sdkVersion\shared"
+        Write-Host "Windows SDK version: $sdkVersion"
+        Write-Host "Added to PATH: $($sdkPath.DirectoryName)"
+        Write-Host "INCLUDE: $env:INCLUDE"
       } else {
         Write-Error "rc.exe not found in Windows SDK"
         exit 1
       }
     - ldc2 --version
     - dub --version
-    - rc /?
   script:
-    # Compile Windows resources
-    - rc /nologo /fo empire.res empire.rc
+    # Compile Windows resources (pass each include path separately)
+    - |
+      $sdkBase = "C:\Program Files (x86)\Windows Kits\10"
+      $sdkVersion = (Get-ChildItem "$sdkBase\Include" | Select-Object -Last 1).Name
+      rc /nologo /i "$sdkBase\Include\$sdkVersion\um" /i "$sdkBase\Include\$sdkVersion\shared" /fo empire.res empire.rc
     # Build release version
     - dub build --build=release --compiler=ldc2
   artifacts:
