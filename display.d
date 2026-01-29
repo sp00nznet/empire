@@ -879,19 +879,33 @@ struct Display
 
 void typcit(Player *p,City *c)
 {
+    winmain.debugWrite("typcit: entering");
     Display *d = p.display;
+    winmain.debugWrite("typcit: got display");
     Text *t = &d.text;
+    winmain.debugWrite("typcit: got text");
 
     if (t.watch)
     {
+	winmain.debugWrite("typcit: watch is true");
 	if (c.phs == -1)
+	{
+	    winmain.debugWrite("typcit: invalid city phase, returning");
 	    return;	// invalid city phase
+	}
+	winmain.debugWrite("typcit: calling cmes");
 	t.cmes(t.DS(1),t.narrow ? "Prod: " : "Producing: ");
-	t.vsmes("%s Completion: %d",d.nmes_p(c.phs,2),c.fnd);
+	winmain.debugWrite("typcit: calling nmes_p");
+	auto nmes = d.nmes_p(c.phs,2);
+	winmain.debugWrite("typcit: calling vsmes");
+	t.vsmes("%s Completion: %d",nmes,c.fnd);
+	winmain.debugWrite("typcit: vsmes done");
 	if (p.human && c.fipath)
 	    t.vsmes(" Fipath: %u,%u",ROW(c.fipath),COL(c.fipath));
+	winmain.debugWrite("typcit: calling deleol");
 	t.deleol();
     }
+    winmain.debugWrite("typcit: done");
 }
 
 /***********************************
