@@ -140,7 +140,7 @@ int PRINTF(char* format, ...)
 
 void _printf_assert(char* file, uint line)
 {
-    PRINTF("assert fail: %s(%d)\n".ptr, file, line);
+    PRINTF(cast(char*)"assert fail: %s(%d)\n".ptr, file, line);
     *cast(char *)0 = 0;	// seg fault to ensure it isn't overlooked
     exit(0);
 }

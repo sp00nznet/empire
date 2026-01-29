@@ -58,7 +58,7 @@ void help(HANDLE hInstance)
      if (inhelp)
 	return;
      inhelp++;
-     hwnd = CreateWindowA (szAppName, "Empire Help",
+     hwnd = CreateWindowA (szAppName.ptr, "Empire Help",
                           WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,
                           CW_USEDEFAULT, CW_USEDEFAULT,
                           CW_USEDEFAULT, CW_USEDEFAULT,
@@ -92,12 +92,12 @@ extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
 		buffer = cast(char[])std.file.read("help.txt");
 		numlines = 0;
 		nMaxWidth = 0;
-		p = buffer;
+		p = buffer.ptr;
 		for (i = 0; i < buffer.length; i++)
 		{
 		    if (buffer[i] == '\n')
 		    {
-			int width = &buffer[i] - p;
+			int width = cast(int)(&buffer[i] - p);
 
 			if (i && buffer[i - 1] == '\r')
 			    width--;
@@ -256,6 +256,9 @@ extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
                     case VK_RIGHT:
                          SendMessageA (hwnd, WM_HSCROLL, SB_PAGEDOWN, 0L) ;
                          break ;
+
+                    default:
+                         break;
                     }
                return 0 ;
 
@@ -268,7 +271,7 @@ extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
                nPaintEnd = min (numlines,
                                 nVscrollPos + ps.rcPaint.bottom / cyChar) ;
 
-		p = buffer;
+		p = buffer.ptr;
 		int linnum = 0;
 		for (i = 0; i < buffer.length; i++)
 		{
@@ -279,7 +282,7 @@ extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
 			    x = cxChar * (1 - nHscrollPos) ;
 			    y = cyChar * (1 - nVscrollPos + linnum);
 
-			    int width = &buffer[i] - p;
+			    int width = cast(int)(&buffer[i] - p);
 			    if (i && buffer[i - 1] == '\r')
 				width--;
 

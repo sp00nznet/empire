@@ -18,6 +18,8 @@
 module var;
 
 import core.stdc.stdio;
+import core.stdc.stdlib : free, calloc;
+import core.stdc.string : memset;
 
 import empire;
 import eplayer;
@@ -139,13 +141,13 @@ void init_var()
 	    free(player[i].map);
 
 	if (player[i].display)
-	    delete player[i].display;
+	    destroy(player[i].display);
     }
 
     memset(&savbeg, 0, &savend - &savbeg);
-    memset(city, 0, city.sizeof);
-    memset(unit, 0, unit.sizeof);
-    memset(player, 0, player.sizeof);
+    memset(city.ptr, 0, city.sizeof);
+    memset(unit.ptr, 0, unit.sizeof);
+    memset(player.ptr, 0, player.sizeof);
 
     for (i = 1; i <= PLYMAX; i++)
     {
@@ -180,16 +182,16 @@ int var_savgam(const(char)* filename)
   if (fwrite(&savbeg, 1, n, fp) != n)
 	goto err2;
   n = CITMAX;
-  if (fwrite(city, City.sizeof, n, fp) != n)
+  if (fwrite(city.ptr, City.sizeof, n, fp) != n)
 	goto err2;
   n = UNIMAX;
-  if (fwrite(unit, Unit.sizeof, n, fp) != n)
+  if (fwrite(unit.ptr, Unit.sizeof, n, fp) != n)
 	goto err2;
   n = PLYMAX + 1;
-  if (fwrite(player, Player.sizeof, n, fp) != n)
+  if (fwrite(player.ptr, Player.sizeof, n, fp) != n)
 	goto err2;
 
-  player[0].map = .map;
+  player[0].map = .map.ptr;
   for (i = 1; i <= numply; i++)
   {
 	n = MAPSIZE;
@@ -223,16 +225,16 @@ int resgam(FILE* fp)
   if (fread(&savbeg, 1, n, fp) != n)
 	goto err2;
   n = CITMAX;
-  if (fread(city, City.sizeof, n, fp) != n)
+  if (fread(city.ptr, City.sizeof, n, fp) != n)
 	goto err2;
   n = UNIMAX;
-  if (fread(unit, Unit.sizeof, n, fp) != n)
+  if (fread(unit.ptr, Unit.sizeof, n, fp) != n)
 	goto err2;
   n = PLYMAX + 1;
-  if (fread(player, Player.sizeof, n, fp) != n)
+  if (fread(player.ptr, Player.sizeof, n, fp) != n)
 	goto err2;
 
-  player[0].map = .map;
+  player[0].map = .map.ptr;
   for (i = 1; i <= numply; i++)
   {
 	n = MAPSIZE;

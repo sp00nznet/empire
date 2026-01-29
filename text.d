@@ -193,7 +193,7 @@ struct Text
 	r = rc >> 8;
 	c = rc & 0xFF;			// get row & column in r,c
 	if (!(r <= (Tmax >> 8) && c <= (Tmax & 0xFF)))
-	    PRINTF("r = %d, c = %d, Tmax = %d,%d\n".ptr, r, c, Tmax >> 8, Tmax & 0xFF);
+	    PRINTF(cast(char*)"r = %d, c = %d, Tmax = %d,%d\n".ptr, r, c, Tmax >> 8, Tmax & 0xFF);
 	assert(r <= (Tmax >> 8) && c <= (Tmax & 0xFF));
 	TTcurs(rc);
     }
