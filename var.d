@@ -121,7 +121,7 @@ int	numply = 0,		/* default number of players playing	*/
 	concede = false,	/* set to true if computer concedes game */
 	numleft = 0;		/* number of players left in the game	*/
 
-Player player[PLYMAX + 1];
+Player[PLYMAX + 1] player;
 
 ubyte savend = 0;		/* so we can find end of variable space	*/
 

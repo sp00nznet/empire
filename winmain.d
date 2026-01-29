@@ -141,7 +141,7 @@ Global global;
 int doit(HANDLE hInstance, HANDLE hPrevInstance,
                     LPSTR lpszCmdLine, int nCmdShow)
 {
-    static   char szAppName [] = "Empire";
+    static   char[] szAppName = "Empire";
     HWND     hwnd;
     MSG      msg;
     WNDCLASS wndclass;
@@ -244,9 +244,9 @@ extern (Windows) int WndProc(HWND hwnd, uint message, WPARAM wParam,
     double newscaley;
 
     // File dialog box
-    static char  szFileName [_MAX_PATH];
-    static char  szTitleName[_MAX_FNAME + _MAX_EXT];
-    static char *szFilter[] = [ "Empire Files (*.EMP)", "*.emp", "" ];
+    static char[_MAX_PATH] szFileName;
+    static char[_MAX_FNAME + _MAX_EXT] szTitleName;
+    static char*[] szFilter = [ "Empire Files (*.EMP)", "*.emp", "" ];
 
     switch (message)
     {

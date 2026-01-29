@@ -29,7 +29,7 @@ extern (C) void sound_click();
 const int VBUFROWS	= 5;
 const int VBUFCOLS	= 80;
 
-char vbuffer[5][80 + 1];
+char[80 + 1][5] vbuffer;
 
 // For each text mode display, which can be either a tty or the
 // PC screen in text mode.

@@ -5,6 +5,7 @@
     "license": "proprietary",
     "targetType": "executable",
     "targetName": "empire",
+    "sourcePaths": [],
     "sourceFiles": [
         "display.d",
         "empire.d",
