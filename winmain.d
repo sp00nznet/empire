@@ -9,6 +9,50 @@ import core.stdc.stdlib;
 import core.stdc.string : strlen;
 import core.sys.windows.windows;
 
+// GDI+ declarations for PNG loading
+extern(Windows) {
+    alias GpStatus = int;
+    alias GpImage = void;
+    alias GpBitmap = void;
+
+    struct GdiplusStartupInput {
+        uint GdiplusVersion = 1;
+        void* DebugEventCallback;
+        int SuppressBackgroundThread;
+        int SuppressExternalCodecs;
+    }
+
+    GpStatus GdiplusStartup(ulong* token, GdiplusStartupInput* input, void* output);
+    void GdiplusShutdown(ulong token);
+    GpStatus GdipLoadImageFromFile(const(wchar)* filename, GpImage** image);
+    GpStatus GdipCreateHBITMAPFromBitmap(GpBitmap* bitmap, HBITMAP* hbmReturn, uint background);
+    GpStatus GdipDisposeImage(GpImage* image);
+}
+
+__gshared ulong gdiplusToken;
+
+HBITMAP loadPngAsHBitmap(const(char)* filename) {
+    GpImage* image;
+    HBITMAP hBitmap;
+
+    wchar[260] wfilename;
+    int i = 0;
+    while (filename[i] && i < 259) {
+        wfilename[i] = filename[i];
+        i++;
+    }
+    wfilename[i] = 0;
+
+    if (GdipLoadImageFromFile(wfilename.ptr, &image) == 0) {
+        if (GdipCreateHBITMAPFromBitmap(cast(GpBitmap*)image, &hBitmap, 0xFF000000) == 0) {
+            GdipDisposeImage(image);
+            return hBitmap;
+        }
+        GdipDisposeImage(image);
+    }
+    return null;
+}
+
 // Debug logging
 __gshared FILE* debugLog;
 
@@ -350,6 +394,10 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.ofn.nMaxFileTitle     = _MAX_FNAME + _MAX_EXT;
 	    global.ofn.lpstrDefExt       = "emp";
 
+	    // Initialize GDI+ for PNG loading
+	    GdiplusStartupInput gdiplusStartupInput;
+	    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, null);
+
 	    for (i = 0; i < MAPMAX; i++)
 	    {
 		hBitmap = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(i + 1));
@@ -357,7 +405,10 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    }
 	    global.unknown10 = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_UNKNOWN10));
 	    global.hCursor = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_CURSOR));
-	    global.hSplash = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_SPLASH));
+	    // Load splash screen from PNG file
+	    global.hSplash = loadPngAsHBitmap("EmpireBG.png");
+	    if (!global.hSplash)
+		global.hSplash = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_SPLASH));
 	    global.hBlast = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_BLAST));
 	    global.hBlastmask = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_BLASTMASK));
 

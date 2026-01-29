@@ -30,6 +30,7 @@
         "/SUBSYSTEM:WINDOWS",
         "user32.lib",
         "gdi32.lib",
+        "gdiplus.lib",
         "winmm.lib",
         "comdlg32.lib",
         "shcore.lib",
