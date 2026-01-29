@@ -417,7 +417,12 @@ struct Text
       if (narrow)           // if 40 column display
             return (row << 8) + 0;
       else
-            return (row << 8) + 200;  // Start messages on far right side of screen
+      {
+            // Position messages on right side: ncols - 40 chars for message
+            int col = ncols - 40;
+            if (col < 70) col = 70;  // minimum position
+            return (row << 8) + col;
+      }
     }
 
 
