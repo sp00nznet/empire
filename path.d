@@ -135,7 +135,7 @@ body
   int begdir;			/* dir that we started out with	*/
 
   const int TRACKMAX = 100;
-  int track[TRACKMAX];		/* list of locs where we stopped */
+  int[TRACKMAX] track;		/* list of locs where we stopped */
 				/* following the shore and went	*/
 				/* straight. This is necessary	*/
 				/* so we don't go around in circles */

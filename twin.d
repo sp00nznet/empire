@@ -73,7 +73,7 @@ extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
 {
     static int  cxChar, cxCaps, cyChar, cxClient, cyClient, nMaxWidth,
                    nVscrollPos, nVscrollMax, nHscrollPos, nHscrollMax ;
-    char          szBuffer[10] ;
+    char[10]      szBuffer ;
     HDC           hdc ;
     int         x, y, nPaintBeg, nPaintEnd, nVscrollInc, nHscrollInc ;
     PAINTSTRUCT   ps ;

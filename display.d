@@ -325,39 +325,39 @@ struct Display
     {   int type,abd;
 	Text *t = &text;
 	char *y;
-	char buffer[100];
+	char[100] buffer;
 
 	if (!t.watch)
 	    return;
 	t.curs(text.DS(0));
 	if (u.typ == A)
 	{
-	    sprintf(buffer,"Your army at %u,%u.", ROW(u.loc), COL(u.loc));
+	    sprintf(buffer.ptr,"Your army at %u,%u.", ROW(u.loc), COL(u.loc));
 	}
 	else
 	{
-	    char buf[10+1];
+	    char[10+1] buf;
 
 	    y = text.narrow ? "Yr" : "Your";
-	    sprintf(buffer,"%s %s at %u,%u.",y,nmes_p(u.typ,1),ROW(u.loc),COL(u.loc));
+	    sprintf(buffer.ptr,"%s %s at %u,%u.",y,nmes_p(u.typ,1),ROW(u.loc),COL(u.loc));
 
 	    if ((type = tcaf(u)) >= 0)		// if we have a T or C
-	    {   char buf[10];
+	    {   char[10] buf;
 
 		abd = aboard(u);		// # aboard
-		sprintf(buf," %d ",abd);
-		strcat(buffer,buf);
-		strcat(buffer,nmes_p(type,abd));
-		strcat(buffer," aboard.");
+		sprintf(buf.ptr," %d ",abd);
+		strcat(buffer.ptr,buf.ptr);
+		strcat(buffer.ptr,nmes_p(type,abd));
+		strcat(buffer.ptr," aboard.");
 	    }
 	    if (u.typ == F)		// if a fighter
-		strcat(buffer," Range: ");
+		strcat(buffer.ptr," Range: ");
 	    else				// else ship
-		strcat(buffer," Hits: ");
-	    sprintf(buf,"%d",u.hit);
-	    strcat(buffer,buf);
+		strcat(buffer.ptr," Hits: ");
+	    sprintf(buf.ptr,"%d",u.hit);
+	    strcat(buffer.ptr,buf.ptr);
 	}
-	t.smes(buffer);
+	t.smes(buffer.ptr);
 	t.deleol();
 	t.curs(text.DS(1));
 	fncprt(u);				// print function
@@ -663,7 +663,7 @@ struct Display
      */
 
     void fncprt(Unit *u)
-    {   static char dtab[9] = "DEWQAZXC";	// directions
+    {   static char[9] dtab = "DEWQAZXC";	// directions
 	Player *p = Player.get(u.own);
 	Text *t = &text;
 

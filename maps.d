@@ -51,7 +51,7 @@ int aboard(Unit *u)
 
 int tcaf(Unit *u)
 {			//    A  F  D  T  S  R  C  B
-    static int tcaftab[8] = [-1,-1,-1, A,-1,-1, F,-1];
+    static int[8] tcaftab = [-1,-1,-1, A,-1,-1, F,-1];
 
     return tcaftab[u.typ];
 }

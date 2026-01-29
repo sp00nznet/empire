@@ -85,12 +85,12 @@ int VPRINTF(char* format, va_list args)
 {
     if (printf_logging != Plog.TOBITBUCKET)
     {
-	char buffer[128];
+	char[128] buffer;
 	char* p;
 	uint psize;
 	int count;
 
-	p = buffer;
+	p = buffer.ptr;
 	psize = buffer.length;
 	for (;;)
 	{

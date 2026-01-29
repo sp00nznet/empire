@@ -102,7 +102,7 @@ struct Global
     HPEN hPen;
 
     // Bitmaps
-    HANDLE mapvaltab[MAPMAX];
+    HANDLE[MAPMAX] mapvaltab;
     HANDLE unknown10;
 
     Player *player;	// which player is being displayed

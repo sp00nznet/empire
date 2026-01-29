@@ -5,15 +5,24 @@
     "license": "proprietary",
     "targetType": "executable",
     "targetName": "empire",
-    "sourcePaths": [
-        "source",
-        "source/core",
-        "source/platform/windows"
-    ],
-    "importPaths": [
-        "source",
-        "source/core",
-        "source/platform/windows"
+    "sourcePaths": ["."],
+    "importPaths": ["."],
+    "sourceFiles": [
+        "display.d",
+        "empire.d",
+        "eplayer.d",
+        "init.d",
+        "mapdata.d",
+        "maps.d",
+        "move.d",
+        "path.d",
+        "printf.d",
+        "sub2.d",
+        "text.d",
+        "twin.d",
+        "var.d",
+        "winemp.d",
+        "winmain.d"
     ],
     "dflags-ldc": ["-mcpu=native"],
     "dflags-dmd": [],

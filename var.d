@@ -28,7 +28,7 @@ import eplayer;
 
 uint noflush = 0;			/* if non-zero then don't flush	*/
 
-Type typx[TYPMAX] =
+Type[TYPMAX] typx =
 [
 	{  5, 6,'A', 0 },
 	{ 10,12,'F',20 },
@@ -43,17 +43,17 @@ Type typx[TYPMAX] =
 
 // These are fleshed out in init_var()
 //		     ,*,.,+,O,A,F,F,D,T,S,R,C,B
-int own [MAPMAX] = [0,0,0,0,1,1,1,1,1,1,1,1,1,1,	// etc.
+int[MAPMAX] own  = [0,0,0,0,1,1,1,1,1,1,1,1,1,1,	// etc.
 			    2,2,2,2,2,2,2,2,2,2];
-int typ [MAPMAX] = [J,X,J,J,X,A,F,F,D,T,S,R,C,B,	// etc.
+int[MAPMAX] typ  = [J,X,J,J,X,A,F,F,D,T,S,R,C,B,	// etc.
 			    X,A,F,F,D,T,S,R,C,B];
-int sea [MAPMAX] = [0,0,1,0,0,0,0,1,1,1,1,1,1,1,	// etc.
+int[MAPMAX] sea  = [0,0,1,0,0,0,0,1,1,1,1,1,1,1,	// etc.
 			    0,0,0,1,1,1,1,1,1,1];
-int land[MAPMAX] = [0,0,0,1,0,1,1,0,0,0,0,0,0,0,	// etc.
+int[MAPMAX] land = [0,0,0,1,0,1,1,0,0,0,0,0,0,0,	// etc.
 			    0,1,1,0,0,0,0,0,0,0];
 
 /* Mask table. Index is type (A..B).	*/
-ubyte msk[8] =	[mA,mF,mD,mT,mS,mR,mC,mB];
+ubyte[8] msk =	[mA,mF,mD,mT,mS,mR,mC,mB];
 
 /* direction table, index is -1..7
  *
@@ -69,7 +69,7 @@ int arrow(dir_t dir)
     }
     body
     {
-	static int arrow[9] =
+	static int[9] arrow =
 	    [0,1,-Mcolmx,-Mcolmx-1,-Mcolmx-2,-1,Mcolmx,Mcolmx+1,Mcolmx+2];
 
 	return arrow[dir + 1];
@@ -90,7 +90,7 @@ ubyte savbeg = 0;		/* start of variable save area		*/
  * Map variables
  */
 
-ubyte map[MAPSIZE] = [0,];	// reference map
+ubyte[MAPSIZE] map = [0,];	// reference map
 int empver = VERSION;		// version number
 //static int mapbas = 0;	// not used
 
@@ -103,14 +103,14 @@ int tamper = false;		/* true means prog has been tampered with */
  */
 
 uint cittop = 0;		/* actual number of cities		*/
-City city[CITMAX];
+City[CITMAX] city;
 
 /*
  * Unit variables.
  */
 
 uint unitop = 0;		/* unitop >= topmost unit number	*/
-Unit unit[UNIMAX];
+Unit[UNIMAX] unit;
 
 /*
  * Player variables.

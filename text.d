@@ -313,11 +313,11 @@ struct Text
      */
 
     void vsmes(char* format,...)
-    {   char buffer[100];
+    {   char[100] buffer;
 	int count;
 
-	count = _vsnprintf(buffer,buffer.sizeof,format,cast(va_list)(&format + 1));
-	smes(buffer);
+	count = _vsnprintf(buffer.ptr,buffer.sizeof,format,cast(va_list)(&format + 1));
+	smes(buffer.ptr);
     }
 
     /****************************
