@@ -59,7 +59,6 @@ build-windows:
     paths:
       - empire.exe
       - "*.bmp"
-      - "*.png"
       - "*.wav"
       - help.txt
     expire_in: 30 days
@@ -83,7 +82,6 @@ deploy-windows:
     - 'if (-not (Test-Path $destPath)) { New-Item -ItemType Directory -Path $destPath -Force }'
     - 'Copy-Item -Path "empire.exe" -Destination $destPath -Force'
     - 'Copy-Item -Path "*.bmp" -Destination $destPath -Force'
-    - 'Copy-Item -Path "*.png" -Destination $destPath -Force'
     - 'Copy-Item -Path "*.wav" -Destination $destPath -Force'
     - 'Copy-Item -Path "help.txt" -Destination $destPath -Force'
     - 'net use R: /delete'
