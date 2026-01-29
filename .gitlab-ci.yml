@@ -24,8 +24,8 @@ build-windows:
       }
     # Install LDC2 D compiler
     - choco install ldc -y --version $LDC_VERSION
-    - $env:PATH = "C:\ProgramData\chocolatey\lib\ldc\tools\ldc2-$LDC_VERSION-windows-x64\bin;$env:PATH"
-    # Install DUB package manager (comes with LDC)
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - refreshenv
     - ldc2 --version
     - dub --version
   script:
