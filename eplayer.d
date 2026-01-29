@@ -3574,8 +3574,6 @@ struct Player
 
 	if (!watch)
 	    return;
-	if (t.narrow == 2)
-	    return;
 	co40 = t.narrow;
 	i = p.num;
 

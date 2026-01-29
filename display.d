@@ -760,8 +760,7 @@ struct Display
 	    }
 	    else
 	    {
-		text.narrow = (cols < 75);	// use 40 column formatting
-		text.narrow = 2;
+		text.narrow = (cols < 75) ? 1 : 0;	// use 40 column formatting
 	    }
 	    text.Tmax = (rows - 1) * 256 + cols - 1;
 	}
