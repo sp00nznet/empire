@@ -648,11 +648,11 @@ struct Display
 	    t.curs(text.DS(1));
 	    Player *pw = Player.get(winner);
 	    if (pw.human)
-		t.smes("You have achieved world domination!");
+		t.smes("You Win!");
 	    else
-		t.vsmes("CPU %d has achieved world domination!", winner);
+		t.vsmes("CPU %d Wins!", winner);
 	    t.deleol();
-	    t.cmes(text.DS(2),"Victory is complete!\1");
+	    t.cmes(text.DS(2),"\1");
 	    t.cmes(text.DS(3),"\1");
 	    delay(10);
 	}

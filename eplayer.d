@@ -3579,7 +3579,7 @@ struct Player
 	i = p.num;
 
 	if (p.defeat)
-	    s = "X".ptr;  // X for defeated
+	    s = "DEAD".ptr;  // DEAD for defeated
 	else
 	{
 	    sprintf(buf.ptr,"%d",r);

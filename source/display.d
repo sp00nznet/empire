@@ -636,6 +636,29 @@ struct Display
     }
 
     /**************************************
+     * Display victory message.
+     */
+
+    void won(int winner)
+    {
+        Text *t = &text;
+        if (t.watch)
+        {
+            t.cmes(text.DS(0),"\1");
+            t.curs(text.DS(1));
+            Player *pw = Player.get(winner);
+            if (pw.human)
+                t.smes("You Win!");
+            else
+                t.vsmes("CPU %d Wins!", winner);
+            t.deleol();
+            t.cmes(text.DS(2),"\1");
+            t.cmes(text.DS(3),"\1");
+            delay(10);
+        }
+    }
+
+    /**************************************
      */
 
     void produce(City *c)
