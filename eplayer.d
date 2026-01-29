@@ -21,6 +21,10 @@ import display;
 import path;
 import move;
 import var;
+import maps;
+import text;
+import winmain;
+import sub2;
 
 // For each player
 
@@ -155,11 +159,11 @@ struct Player
 	if (!human)			// if computer player
 	    cityph();			// adjust city phases as req'd
 	display.remove_sticky();	// remove any 'sticky' messages
-	hrdprd(this);			// hardware production
+	hrdprd(&this);			// hardware production
 	chkwin();			// see if anybody won
 	round++;			// next round
 	for (int i = 1; i <= numply; i++)
-	    Player.get(i).notify_round(this,round);	// type out the round #
+	    Player.get(i).notify_round(&this,round);	// type out the round #
 	display.text.flush();
     }
 
@@ -263,7 +267,7 @@ struct Player
 		{   if (.typ[ab] != C)
 		    {
 			// if F landing on a carrier
-			u.hit = typx[F].hittab;		// reset range of F
+			u.hit = cast(ubyte)typx[F].hittab;		// reset range of F
 			d.landing(u);
 			eomove(u.loc);
 		    }
@@ -310,7 +314,7 @@ struct Player
 	    {   if (.own[ac] == p.num)	// if the city is ours
 		{
 		    // land the plane
-		    u.hit = typx[F].hittab;	// reset range of F
+		    u.hit = cast(ubyte)typx[F].hittab;	// reset range of F
 		    d.landing(u);
 		    eomove(u.loc);
 		}
@@ -390,7 +394,7 @@ struct Player
 
     void attcit(loc_t loc)
     {   int ab = .map[loc];
-        Player *patt = this;
+        Player *patt = &this;
         Player *pdef = Player.get(own[ab]);
         City *c;
 
@@ -411,9 +415,9 @@ struct Player
 	    assert(c.own == pdef.num);
 	    mapval = 4 + 10 * (patt.num - 1);	// map val of conquered city
 	    assert(.own[mapval] == patt.num);
-	    .map[loc] = mapval;			// set reference map
+	    .map[loc] = cast(ubyte)mapval;		// set reference map
 	    snsflg = c.own;			// !=0 if do sensor for enemy
-	    c.own = patt.num;			// set new owner
+	    c.own = cast(ubyte)patt.num;		// set new owner
 
 	    /* Destroy any enemy pieces in the city.
 	     */
@@ -565,8 +569,8 @@ struct Player
         while (!loc ||			// if city doesn't exist or
 	    edger(loc) == 8 ||		// island city or
 	    c.own);			// already owned
-        c.own = p.num;			// claim the city
-        .map[loc] = 4 + (p.num - 1) * 10;	// set map value
+        c.own = cast(ubyte)p.num;		// claim the city
+        .map[loc] = cast(ubyte)(4 + (p.num - 1) * 10);	// set map value
         p.sensor(loc);			// do a sensor probe
         if (p.human)			// if human player
 	    p.phasin(c);		// get city phase
