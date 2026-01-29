@@ -171,11 +171,25 @@ void chkwin()
 
 	}
 
-	if (numleft != 1)
+	if (numleft == 1)
+	{
+	    // Find the winner and display victory message
+	    for (i = 1; i <= numply; i++)
+	    {
+		if (!Player.get(i).defeat)
+		{
+		    Player.get(i).display.won(i);
+		    break;
+		}
+	    }
+	}
+	else
+	{
 	    for (i = 1; i < numply; i++)
 	    {   if (!Player.get(i).defeat && Player.get(i).watch)
 		    goto L1;
 	    }
+	}
 	done(0);
 
     L1:

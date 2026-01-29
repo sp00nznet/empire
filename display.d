@@ -176,7 +176,7 @@ struct Display
 
     void your()
     {
-	text.smes(text.narrow ? "Yr " : "Your ");
+	text.smes("You ");
     }
 
 
@@ -592,11 +592,11 @@ struct Display
     {
 	if (p.num == num)
 	{
-	    return text.narrow ? "Yr ".ptr : "Your ".ptr;
+	    return "You ".ptr;
 	}
 	else
 	{
-	    return text.narrow ? "En ".ptr : "Enemy ".ptr;
+	    return "CPU ".ptr;
 	}
     }
 
@@ -609,7 +609,7 @@ struct Display
 	Text *t = &text;
 	if (t.watch)
 	{
-	    t.cmes(text.DS(2),"Player ");
+	    t.cmes(text.DS(2),"CPU ");
 	    t.decprt(pdef.num);
 	    t.imes(" has been crushed.\1\2");
 	    t.curs(text.DS(3));
@@ -630,6 +630,28 @@ struct Display
 	{   t.cmes(text.DS(0),"The enemy has crushed your feeble forces!\1");
 	    t.cmes(text.DS(1),"Your contemptible dreams of world\1");
 	    t.cmes(text.DS(2),"Empire are finished!\1");
+	    t.cmes(text.DS(3),"\1");
+	    delay(10);
+	}
+    }
+
+    /***********************************
+     * Notify that player has won.
+     */
+
+    void won(int winner)
+    {
+	Text *t = &text;
+	if (t.watch)
+	{
+	    t.cmes(text.DS(0),"\1");
+	    t.curs(text.DS(1));
+	    if (winner == 1)
+		t.smes("You have achieved world domination!");
+	    else
+		t.vsmes("CPU %d has achieved world domination!", winner);
+	    t.deleol();
+	    t.cmes(text.DS(2),"Victory is complete!\1");
 	    t.cmes(text.DS(3),"\1");
 	    delay(10);
 	}
