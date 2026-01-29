@@ -368,6 +368,7 @@ struct Player
 	    case T:
 	    case C:
 		p.drag(u);			// drag along As and Fs
+		goto case;
 	    case D:
 	    case S:
 	    case R:
@@ -686,6 +687,7 @@ struct Player
 		    goto cmderr;		// no defaults!
 	    case 3:
 		    done(1);
+		    goto case;
 	    case ' ':			// stay put
 		    *pr2 = -1;
 		    if (p.mode == mdMOVE)
@@ -810,7 +812,7 @@ struct Player
       {   if (!p.cittst())		// if not an owned city
 		goto err;
 	    p.maxrng = typx[F].hittab;	// set to max fighter range
-	    p.citnum = fndcit(p.curloc) - &city[0]; // find city #
+	    p.citnum = cast(int)(fndcit(p.curloc) - &city[0]); // find city #
       }
       else if (p.curloc != u.loc ||
 	       (md == mdSURV && u.typ == F && typ[ab] == C))
@@ -1051,13 +1053,13 @@ struct Player
       }
       if (p.mode != mdMOVE)		// then look at visible piece
       {   Unit *ui = fnduni(p.curloc);
-	    ui.ifo = ifo;
+	    ui.ifo = cast(ubyte)ifo;
 	    ui.ila = ila;
 	    p.display.headng(ui);
 	    return false;
       }
       else					// else in mdMOVE
-      {   u.ifo = ifo;
+      {   u.ifo = cast(ubyte)ifo;
 	    u.ila = ila;
 	    p.display.headng(u);		// type out new heading
 	    return true;
@@ -1097,7 +1099,7 @@ struct Player
      */
 
     void setmode(int newmod)
-    {   static char*[] modmsg =
+    {   static string[] modmsg =
 	[	"         \1",
 	    "Move     \1",
 	    "Survey   \1",
@@ -1108,7 +1110,7 @@ struct Player
 
 	if (mode != newmod)			// if it is a new mode
 	{
-	    display.text.cmes(display.text.DS(2), modmsg[newmod]);
+	    display.text.cmes(display.text.DS(2), modmsg[newmod].ptr);
 	    display.text.flush();
 	    if (newmod == mdSURV || newmod == mdDIR ||
 		mode == mdSURV || mode == mdTO || mode == mdDIR)
@@ -1426,7 +1428,7 @@ struct Player
 	    t.curs(t.DS(0) + 25);		// where we want the prod to beg
 	    t.output(ab);			// echo
 	}
-	c.phs = i;				// set city phase
+	c.phs = cast(ubyte)i;			// set city phase
 	c.fnd = p.round + typx[i].phstart;
 	typcit(p,c);
 	d.delay(1);
@@ -2047,27 +2049,27 @@ struct Player
 		sp[p][3] = 0; ap[p][3] = 1; lp[p][3] = 1;	// +
 		for (m = 4; m < MAPMAX; m++)
 		{
-		    sp[p][m] = sea[m];
+		    sp[p][m] = cast(byte)sea[m];
 		    if (((m - 4) / 10) == p)
 		    {   // It's our city or unit
-			ap[p][m] = (typ[m] == X || typ[m] == C);
-			lp[p][m] = land[m];
+			ap[p][m] = cast(byte)(typ[m] == X || typ[m] == C);
+			lp[p][m] = cast(byte)land[m];
 		    }
 		    else
 		    {   // It's an enemy city or unit
-			ap[p][m] = typ[m] != X;
-			lp[p][m] = (typ[m] == X || land[m]);
+			ap[p][m] = cast(byte)(typ[m] != X);
+			lp[p][m] = cast(byte)(typ[m] == X || land[m]);
 		    }
 		}
 	    }
 	}
 	switch (u.typ)
-	{   case A:	flag = patho(u.loc,toloc,u.dir,lp[num - 1],&r2);
+	{   case A:	flag = patho(u.loc,toloc,u.dir,lp[num - 1].ptr,&r2);
 		    break;
-	    case F: flag = patho(u.loc,toloc,u.dir,ap[num - 1],&r2);
+	    case F: flag = patho(u.loc,toloc,u.dir,ap[num - 1].ptr,&r2);
 		    break;
 	    default:			// ships
-		    flag = patho(u.loc,toloc,u.dir,sp[num - 1],&r2);
+		    flag = patho(u.loc,toloc,u.dir,sp[num - 1].ptr,&r2);
 	}
 	version (none)
 	{
@@ -3068,7 +3070,7 @@ struct Player
 	    if (u)
 		d.headng(u);
 	    else if (c)
-		typcit(this,c);
+		typcit(&this,c);
 	    d.pcur(curloc);
 	    cmd = t.TTin();
 	    switch (cmd)
@@ -3278,7 +3280,7 @@ struct Player
 	j = B - 1;
 	while (j >= D)
 	{   if (p.numphs[j] <= p.numphs[j + 1])
-		c.phs = j;		// priority to cheaper ships
+		c.phs = cast(ubyte)j;	// priority to cheaper ships
 	    j--;
 	}
 	if (!p.numphs[C])		// if nobody making Cs
@@ -3300,7 +3302,7 @@ struct Player
 	int j;
 	uint *pl;
 
-	pl = p.loci;			// pl . start of loci array
+	pl = p.loci.ptr;		// pl . start of loci array
 	for (j = LOCMAX; j--; pl++)
 	{   if (!*pl) continue;		// no loci
 	    if (patlnd(c.loc,*pl))		// if on same continent
