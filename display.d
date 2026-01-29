@@ -16,7 +16,8 @@
 
 
 import core.stdc.stdlib;
-import core.stdc.string : memset;
+import core.stdc.stdio : sprintf;
+import core.stdc.string : memset, strcat;
 import core.stdc.time;
 
 import empire;
@@ -325,7 +326,7 @@ struct Display
     void headng(Unit *u)
     {   int type,abd;
 	Text *t = &text;
-	char *y;
+	const(char)* y;
 	char[100] buffer;
 
 	if (!t.watch)
@@ -343,11 +344,11 @@ struct Display
 	    sprintf(buffer.ptr,"%s %s at %u,%u.",y,nmes_p(u.typ,1),ROW(u.loc),COL(u.loc));
 
 	    if ((type = tcaf(u)) >= 0)		// if we have a T or C
-	    {   char[10] buf;
+	    {   char[10] buf2;
 
 		abd = aboard(u);		// # aboard
-		sprintf(buf.ptr," %d ",abd);
-		strcat(buffer.ptr,buf.ptr);
+		sprintf(buf2.ptr," %d ",abd);
+		strcat(buffer.ptr,buf2.ptr);
 		strcat(buffer.ptr,nmes_p(type,abd));
 		strcat(buffer.ptr," aboard.");
 	    }
@@ -369,14 +370,14 @@ struct Display
      * Type out unit message, plural or singular
      */
 
-    char *nmes_p(int type,int num)
+    const(char)* nmes_p(int type,int num)
     in
     {
 	assert(0 <= type && type < TYPMAX);
     }
     body
     {
-	static char*[2][8] msg =
+	static string[2][8] msg =
 	[   [	"army",			"armies"		],
 	    [   "fighter",		"fighters"		],
 	    [   "destroyer",		"destroyers"		],
@@ -388,7 +389,7 @@ struct Display
 	];
 
 	// For narrow displays
-	static char[3][2][8] msgn =
+	static string[2][8] msgn =
 	[
 	    [   "A","As" ],
 	    [   "F","Fs" ],
@@ -401,9 +402,9 @@ struct Display
 	];
 
 	if (text.narrow)
-	    return (num == 1) ? msgn[type][0] : msgn[type][1];
+	    return (num == 1) ? msgn[type][0].ptr : msgn[type][1].ptr;
 	else
-	    return (num == 1) ? msg[type][0] : msg[type][1];
+	    return (num == 1) ? msg[type][0].ptr : msg[type][1].ptr;
     }
 
 
@@ -825,7 +826,7 @@ struct Display
      */
 
     void valcmd(int mode)
-    {   static char*[] valmsg =
+    {   static string[] valmsg =
 	[   "valcmd()",			// just a place holder
 	    "QWEADZXC,FGHIKLNRSUVY<>,space", // Move
 	    "QWEADZXC,FGHIKLNPRSU<>,esc",	// Survey
