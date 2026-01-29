@@ -25,11 +25,7 @@ enum _MAX_FNAME = 256;
 enum _MAX_EXT = 256;
 
 /********************************************************/
-extern (C) void gc_init();
-extern (C) void gc_term();
-extern (C) void _minit();
-extern (C) void _moduleCtor();
-extern (C) void _moduleUnitTests();
+// D2 runtime is automatically initialized before WinMain
 
 extern (Windows)
 int WinMain(HINSTANCE hInstance,
@@ -39,14 +35,8 @@ int WinMain(HINSTANCE hInstance,
 {
     int result;
 
-    gc_init();			// initialize garbage collector
-    _minit();			// initialize module constructor table
-
     try
     {
-	_moduleCtor();		// call module constructors
-	_moduleUnitTests();	// run unit tests (optional)
-
 	// insert user code here
 	result = doit(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
     }
@@ -58,7 +48,6 @@ int WinMain(HINSTANCE hInstance,
 	result = 0;		// failed
     }
 
-    gc_term();			// run finalizers; terminate garbage collector
     return result;
 }
 /********************************************************/
