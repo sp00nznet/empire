@@ -68,7 +68,7 @@ int selmap()
     int i,a,c,n;
 
     j = empire.random(5);
-    d = cast(ubyte *)(*mapdata.mapdata[j]);
+    d = (*mapdata.mapdata[j]).ptr;
     i = MAPSIZE - 1;
     while ((c = *d) != 0)		// 0 marks end of data
     {	n = (c >> 2) & 63;		// count of map values - 1
