@@ -29,7 +29,7 @@ int min(int a, int b) { return (a < b) ? a : b; }
 int max(int a, int b) { return (a > b) ? a : b; }
 
 int inhelp;
-char[] szAppName = "TextWin" ;
+string szAppName = "TextWin" ;
 
 void helpRegister(HANDLE hInstance)
 {
