@@ -16,6 +16,7 @@
 
 
 import core.stdc.stdlib;
+import core.stdc.string : memset;
 import core.stdc.time;
 
 import empire;
@@ -43,7 +44,7 @@ struct Display
 
     void clrsec()
     {
-	Display *d = this;
+	Display *d = &this;
 	Text *t = &d.text;
 
 	//t.cmes(d.Smin," ");		// " " because of bug in BIOS
@@ -59,7 +60,7 @@ struct Display
 
     void mapprt(loc_t loc)
     {   int x;
-        Display *d = this;
+        Display *d = &this;
         Text *t = &d.text;
 
         if (!t.watch) return;
@@ -81,7 +82,7 @@ struct Display
     {   int br,bc,lr,lc;
         int x;
         int sb;
-        Display *d = this;
+        Display *d = &this;
 
       assert(loc < MAPSIZE && n < 100);
       sb = d.secbas;
@@ -115,7 +116,7 @@ struct Display
 
     loc_t adjust(loc_t loc)
     {   int row,col,size,rowsize,colsize;
-        Display *d = this;
+        Display *d = &this;
 
         row = ROW(loc);
         col = COL(loc);
@@ -852,7 +853,7 @@ struct Display
     }
 
     void delay(int n)
-    {   Display *d = this;
+    {   Display *d = &this;
 
 	if (d.text.watch)
 	{   d.text.flush();

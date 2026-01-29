@@ -283,7 +283,7 @@ struct Text
      * Send string to output.
      */
 
-    void imes(char *p)
+    void imes(const(char)* p)
     {
       //printf("imes('%s')\n",p);
       if (watch)
@@ -298,7 +298,7 @@ struct Text
      * Send string to output.
      */
 
-    void smes(char *p)
+    void smes(const(char)* p)
     {
       //printf("smes('%s')\n",p);
       if (watch)
@@ -312,7 +312,7 @@ struct Text
      * Formatted print.
      */
 
-    void vsmes(char* format,...)
+    void vsmes(const(char)* format,...)
     {   char[100] buffer;
 	int count;
 
@@ -324,7 +324,7 @@ struct Text
      * Position cursor and type message.
      */
 
-    void cmes(int rc,char *p)
+    void cmes(int rc, const(char)* p)
     {
       if (!watch) return;
       TTcurs(rc);
