@@ -3587,30 +3587,31 @@ struct Player
 	    s = buf.ptr;
 	}
 
-	if (r <= 1 || co40 || watch == DAwindows)
-	{
-	    // Show all players: row 0 has 1-4, row 1 has 5-8, row 2 has 9-11
-	    // Each slot is 10 chars wide
-	    int row = (i - 1) / 4;
-	    int col = ((i - 1) % 4) * 10;
-	    t.curs((row << 8) + col);
+	// All players on row 0, 6 chars each: "1:123 " or "*1:12 "
+	// 11 players × 6 chars = 66 chars, fits in 80 col display
+	int col;
+	if (i <= 9)
+	    col = (i - 1) * 6;
+	else
+	    col = 9 * 6 + (i - 10) * 7;  // 10 and 11 need extra char
 
-	    if (p == &this)		// Current POV player
-	    {
-		if (p.human)
-		    t.vsmes("*You:%s ",s);
-		else
-		    t.vsmes("*C%d:%s ",i,s);  // * indicates current POV
-	    }
+	t.curs(col);  // row 0, column varies
+
+	if (p == &this)		// Current POV player
+	{
+	    if (p.human)
+		t.vsmes("*Y:%s ",s);
+	    else if (i <= 9)
+		t.vsmes("*%d:%s ",i,s);
 	    else
-		t.vsmes("C%d:%s ",i,s);
+		t.vsmes("*%d:%s ",i,s);
 	}
 	else
 	{
-	    int row = (i - 1) / 4;
-	    int col = ((i - 1) % 4) * 10 + 4;
-	    t.curs((row << 8) + col);
-	    t.vsmes("%s ",s);
+	    if (i <= 9)
+		t.vsmes("%d:%s ",i,s);
+	    else
+		t.vsmes("%d:%s ",i,s);
 	}
     }
 
