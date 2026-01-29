@@ -21,7 +21,9 @@ import core.stdc.string : memset;
 
 import empire;
 import eplayer;
+import maps;
 import sub2;
+import text;
 import var;
 
 const int HYSTERESIS = 10;
@@ -144,7 +146,7 @@ void chkwin()
   Text *t;
   Player *p;
 
-  memset(n,0,n.sizeof);
+  memset(n.ptr,0,n.sizeof);
 
   for (i = CITMAX; i--;)
 	n[city[i].own]++;		// inc number owned

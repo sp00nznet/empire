@@ -19,6 +19,8 @@ module path;
 
 import empire;
 import eplayer;
+import maps;
+import var;
 
 /****************************************
  * Find path from beg to end over

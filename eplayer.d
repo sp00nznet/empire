@@ -3555,7 +3555,7 @@ struct Player
 	    s = "lost".ptr;
 	else
 	{
-	    core.stdc.stdio.sprintf(buf.ptr,"%d",r);
+	    sprintf(buf.ptr,"%d",r);
 	    s = buf.ptr;
 	}
 
