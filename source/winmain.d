@@ -1528,25 +1528,6 @@ int scaleDpi(int value, uint dpi) pure nothrow
 extern (C):
 
 /**
- * Flush display updates to screen.
- */
-void win_flush()
-{
-    UpdateWindow(global.hwnd);
-}
-
-/**
- * Play UI click sound.
- */
-void sound_click()
-{
-    if (global.speaker)
-    {
-        PlaySoundA("click.wav", null, SND_ASYNC | SND_FILENAME | SND_NOSTOP);
-    }
-}
-
-/**
  * Invalidate a single map location for redraw.
  */
 void win_invalidate_loc(uint loc)
