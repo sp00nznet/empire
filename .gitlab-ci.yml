@@ -11,7 +11,7 @@ build-windows:
   stage: build
   tags:
     - windows
-    - shared-windows
+    - shell
   variables:
     ErrorActionPreference: stop
   before_script:
