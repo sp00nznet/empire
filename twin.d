@@ -33,18 +33,18 @@ string szAppName = "TextWin" ;
 
 void helpRegister(HANDLE hInstance)
 {
-    WNDCLASS    wndclass ;
+    WNDCLASSA    wndclass ;
 
     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
     wndclass.lpfnWndProc   = &TextWndProc ;
     wndclass.cbClsExtra    = 0 ;
     wndclass.cbWndExtra    = 0 ;
     wndclass.hInstance     = hInstance ;
-    wndclass.hIcon         = LoadIconA(null, IDI_APPLICATION) ;
-    wndclass.hCursor       = LoadCursorA(null, IDC_ARROW) ;
+    wndclass.hIcon         = LoadIconA(null, cast(const(char)*)IDI_APPLICATION) ;
+    wndclass.hCursor       = LoadCursorA(null, cast(const(char)*)IDC_ARROW) ;
     wndclass.hbrBackground = GetStockObject(WHITE_BRUSH) ;
     wndclass.lpszMenuName  = null ;
-    wndclass.lpszClassName = szAppName ;
+    wndclass.lpszClassName = szAppName.ptr ;
 
     RegisterClassA(&wndclass) ;
 }
@@ -69,7 +69,7 @@ void help(HANDLE hInstance)
 }
 
 extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
-                                                          LPARAM lParam)
+                                                          LPARAM lParam) nothrow
 {
     static int  cxChar, cxCaps, cyChar, cxClient, cyClient, nMaxWidth,
                    nVscrollPos, nVscrollMax, nHscrollPos, nHscrollMax ;

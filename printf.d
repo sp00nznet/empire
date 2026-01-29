@@ -23,10 +23,10 @@
 
 import core.stdc.stdio;
 import core.stdc.stdlib;
+import core.stdc.string : strlen;
+import core.stdc.stdarg;
 import std.string;
 import std.file;
-
-alias void* va_list;
 
 const int LOG = 1;		// disable logging by setting this to 0
 
@@ -81,7 +81,7 @@ void LogfileAppend(char* buffer)
 extern (C)
 {
 
-int VPRINTF(char* format, va_list args)
+int VPRINTF(char* format, char* args)
 {
     if (printf_logging != Plog.TOBITBUCKET)
     {
@@ -96,7 +96,7 @@ int VPRINTF(char* format, va_list args)
 	{
 	    version (linux)
 	    {
-		count = vsnprintf(p,psize,format,args);
+		count = vsnprintf(p,psize,format,cast(va_list)args);
 		if (count == -1)
 		    psize *= 2;
 		else if (count >= cast(int)psize)
@@ -129,11 +129,9 @@ int PRINTF(char* format, ...)
 
     if (printf_logging != Plog.TOBITBUCKET)
     {
-	va_list ap;
-	//va_start(ap, format);
-	ap = cast(va_list)(cast(void*)format + format.sizeof);
+	char* ap;
+	ap = cast(char*)(cast(void*)&format + format.sizeof);
 	result = VPRINTF(format,ap);
-	//va_end(ap);
     }
     return result;
 }
@@ -142,7 +140,7 @@ int PRINTF(char* format, ...)
 
 void _printf_assert(char* file, uint line)
 {
-    PRINTF("assert fail: %s(%d)\n", file, line);
+    PRINTF("assert fail: %s(%d)\n".ptr, file, line);
     *cast(char *)0 = 0;	// seg fault to ensure it isn't overlooked
     exit(0);
 }

@@ -154,7 +154,7 @@ struct Text
 	c = inbuf;
 	inbuf = -1;
 
-	return std.ctype.toupper(cast(dchar)c);
+	return toupper(c);
     }
 
     void TTunget(int c)		// put character c in input
@@ -193,7 +193,7 @@ struct Text
 	r = rc >> 8;
 	c = rc & 0xFF;			// get row & column in r,c
 	if (!(r <= (Tmax >> 8) && c <= (Tmax & 0xFF)))
-	    PRINTF("r = %d, c = %d, Tmax = %d,%d\n", r, c, Tmax >> 8, Tmax & 0xFF);
+	    PRINTF("r = %d, c = %d, Tmax = %d,%d\n".ptr, r, c, Tmax >> 8, Tmax & 0xFF);
 	assert(r <= (Tmax >> 8) && c <= (Tmax & 0xFF));
 	TTcurs(rc);
     }
@@ -316,7 +316,7 @@ struct Text
     {   char[100] buffer;
 	int count;
 
-	count = _vsnprintf(buffer.ptr,buffer.sizeof,format,cast(va_list)(&format + 1));
+	count = _vsnprintf(buffer.ptr,buffer.sizeof,format,cast(char*)(&format + 1));
 	smes(buffer.ptr);
     }
 
@@ -387,7 +387,7 @@ struct Text
 	if (watch)
 	{
 	    curs(rc);
-	    output(value);
+	    output(cast(char)value);
 	}
     }
 

@@ -142,10 +142,10 @@ body
     int mapinm() { return ok[*(mapb+loc)] || loc==end; }
 
     // Same as armain(), but trymov is given.
-    int armap() { return (loc=curloc+arrow(trymov)),mapinm(); }
+    int armap() { loc=curloc+arrow(trymov); return mapinm(); }
 
     // See if we can move from curloc to end. Set trymov and loc
-    int armain() { return (trymov=movdir(curloc,end)),armap(); }
+    int armain() { trymov=movdir(curloc,end); return armap(); }
 
   /* initialize
    */

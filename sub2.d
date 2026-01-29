@@ -17,9 +17,11 @@
 
 module sub2;
 
+import core.stdc.string : memset;
 import std.string;
 
 import empire;
+import maps;
 import var;
 
 /*********************************
@@ -70,9 +72,9 @@ body
 		unitop = i + 1;		// set unitop to 1 past max uninum
 	    memset(u,0,Unit.sizeof);
 	    u.loc = loc;
-	    u.own = pn;
-	    u.typ = ty;
-	    u.hit = typx[ty].hittab;
+	    u.own = cast(ubyte)pn;
+	    u.typ = cast(ubyte)ty;
+	    u.hit = cast(ubyte)typx[ty].hittab;
 	    u.dir = (i & 1) ? 1 : -1;
 	    *pu = u;			// return unit # created
 	    return true;		// successful
