@@ -47,11 +47,6 @@ build-windows:
     - ldc2 --version
     - dub --version
   script:
-    # Clean cached build artifacts to ensure fresh build
-    - |
-      if (Test-Path ".dub") { Remove-Item -Path ".dub" -Recurse -Force }
-      if (Test-Path "empire.res") { Remove-Item -Path "empire.res" -Force }
-      if (Test-Path "empire.exe") { Remove-Item -Path "empire.exe" -Force }
     # Compile Windows resources (pass each include path separately)
     - |
       $sdkBase = "C:\Program Files (x86)\Windows Kits\10"
