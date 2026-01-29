@@ -294,8 +294,8 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.pixely = 120;
 
 	    global.hwnd = hwnd;
-	    global.scalex = 1.0;
-	    global.scaley = 1.0;
+	    global.scalex = 3.0;
+	    global.scaley = 3.0;
 	    global.numplayers = IDD_FOUR;
 	    global.map = var.map.ptr;
 	    global.offsetx = 0;
@@ -305,10 +305,10 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.text.left = 0;
 	    global.text.top = 0;
 	    global.text.right = global.pixelx;
-	    global.text.bottom = 40;
+	    global.text.bottom = 80;
 
 	    global.sector.left = 0;
-	    global.sector.top = 40;
+	    global.sector.top = 80;
 	    global.sector.right = global.pixelx;
 	    global.sector.bottom = global.sector.top + global.pixely;
 
@@ -363,8 +363,8 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 
 	    hdc = GetDC(hwnd);
 
-	    logfont.lfHeight = 10;
-	    logfont.lfWidth = 5;
+	    logfont.lfHeight = 16;
+	    logfont.lfWidth = 8;
 	    global.hFont = CreateFontIndirectA(&logfont);
 	    SelectObject(hdc, global.hFont);
 
@@ -384,19 +384,21 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    global.pixelx = global.cxClient;
 	    if (global.pixelx < 120)
 		global.pixelx = 120;
-	    if (global.pixelx > (Mcolmx + 1) * 10)
-		global.pixelx = (Mcolmx + 1) * 10;
+	    // Clamp viewport to scaled map size (scale determines tile size)
+	    if (global.pixelx > cast(int)((Mcolmx + 1) * 10 * global.scalex))
+		global.pixelx = cast(int)((Mcolmx + 1) * 10 * global.scalex);
 	    if (global.pixelx / cast(int)(10 * global.scalex) < 5)
 	    {
 		global.scalex = global.pixelx / (10 * 5.0);
 		global.scaley = global.scalex;
 	    }
 
-	    global.pixely = global.cyClient - 40;
+	    global.pixely = global.cyClient - 80;
 	    if (global.pixely < 120)
 		global.pixely = 120;
-	    if (global.pixely > (Mrowmx + 1) * 10)
-		global.pixely = (Mrowmx + 1) * 10;
+	    // Clamp viewport to scaled map size
+	    if (global.pixely > cast(int)((Mrowmx + 1) * 10 * global.scaley))
+		global.pixely = cast(int)((Mrowmx + 1) * 10 * global.scaley);
 	    if (global.pixely / cast(int)(10 * global.scaley) < 5)
 	    {
 		global.scaley = global.pixely / (10 * 5.0);
@@ -717,7 +719,7 @@ else
 
 		// Draw a rectangle around the map edge
 		x1 = -c * dx - global.offsetx;
-		y1 = 40 - r * dx - global.offsety;
+		y1 = 80 - r * dx - global.offsety;
 		x2 = x1 + (Mcolmx + 1) * dx - 1;
 		y2 = y1 + (Mrowmx + 1) * dy - 1;
 		global.hPen = CreatePen(PS_SOLID, dx/3+2, RGB(255, 0, 0));
@@ -760,14 +762,14 @@ else
 		    LineTo(hdc, x2, y2);
 
 		    x1 = cursorx;
-		    y1 = 40;
+		    y1 = 80;
 		    x2 = x1;
 		    y2 = cursory - dy/2;
 		    MoveToEx(hdc, x1, y1, null);
 		    LineTo(hdc, x2, y2);
 
 		    y1 = y2 + dy;
-		    y2 = 40 + global.pixely;
+		    y2 = 80 + global.pixely;
 		    MoveToEx(hdc, x1, y1, null);
 		    LineTo(hdc, x2, y2);
 
@@ -1575,7 +1577,7 @@ void invalidateLoc(loc_t loc)
     dy = cast(int)(10 * global.scaley);
 
     rect.left = c * dx - global.offsetx;
-    rect.top = 40 + r * dy - global.offsety;
+    rect.top = 80 + r * dy - global.offsety;
     rect.right = rect.left + dx;
     rect.bottom = rect.top + dy;
 
@@ -1623,7 +1625,7 @@ void invalidateLocRect(loc_t loc1, loc_t loc2)
     dy = cast(int)(10 * global.scaley);
 
     rect.left = c1 * dx - global.offsetx;
-    rect.top = 40 + r1 * dy - global.offsety;
+    rect.top = 80 + r1 * dy - global.offsety;
     rect.right = rect.left + dx * (c2 - c1 + 1);
     rect.bottom = rect.top + dy * (r2 - r1 + 1);
 
@@ -1663,7 +1665,7 @@ int LocToY(loc_t loc)
 
     row = ROW(loc) - ROW(global.ulcorner);
     dy = cast(int)(10 * global.scaley);
-    y = 40 + row * dy + dy / 2 - global.offsety;
+    y = 80 + row * dy + dy / 2 - global.offsety;
     return y;
 }
 
