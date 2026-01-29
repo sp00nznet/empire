@@ -416,7 +416,7 @@ struct Text
       if (narrow)			// if 40 column display
 	    return (row << 8) + 0;
       else
-	    return (row << 8) + 120;  // Start messages on far right side of screen
+	    return (row << 8) + 200;  // Start messages on far right side of screen
     }
 
 
