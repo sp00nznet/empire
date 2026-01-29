@@ -4,10 +4,36 @@
 // Compile with Digital Mars compiler www.digitalmars.com
 // www.classicempire.com
 
-import core.stdc.stdio : FILE, fopen;
+import core.stdc.stdio : FILE, fopen, fprintf, fflush, fclose;
 import core.stdc.stdlib;
 import core.stdc.string : strlen;
 import core.sys.windows.windows;
+
+// Debug logging
+__gshared FILE* debugLog;
+
+void debugInit() {
+    debugLog = fopen("empire_debug.log", "w");
+    if (debugLog) {
+        fprintf(debugLog, "Empire Debug Log Started\n");
+        fflush(debugLog);
+    }
+}
+
+void debugWrite(const(char)* msg) {
+    if (debugLog) {
+        fprintf(debugLog, "%s\n", msg);
+        fflush(debugLog);
+    }
+}
+
+void debugClose() {
+    if (debugLog) {
+        fprintf(debugLog, "Empire Debug Log Ended\n");
+        fclose(debugLog);
+        debugLog = null;
+    }
+}
 
 import empire;
 import winemp;
@@ -35,19 +61,26 @@ int WinMain(HINSTANCE hInstance,
 {
     int result;
 
+    debugInit();
+    debugWrite("WinMain started");
+
     try
     {
 	// insert user code here
+	debugWrite("Calling doit()");
 	result = doit(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	debugWrite("doit() returned");
     }
 
     catch (Throwable t)		// catch any uncaught exceptions
     {
+	debugWrite("Exception caught in WinMain");
 	MessageBoxA(null, cast(char *)(t.msg.ptr), "Error",
 		    MB_OK | MB_ICONEXCLAMATION);
 	result = 0;		// failed
     }
 
+    debugClose();
     return result;
 }
 /********************************************************/
@@ -400,12 +433,17 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    switch (wParam)
 	    {
 		case IDM_NEW:		// start new game
+		    debugWrite("IDM_NEW: Starting new game");
 		    DialogBoxParamA(global.hinst, "InitBox", hwnd,
 				    global.lpfnInitDlgProc, 0);
+		    debugWrite("IDM_NEW: Dialog closed, calling init_var()");
 		    init_var();
+		    debugWrite("IDM_NEW: init_var() done, calling winSetup()");
 		    winSetup();
+		    debugWrite("IDM_NEW: winSetup() done");
 		    global.inited = 1;
 		    InvalidateRect(hwnd, null, true) ;
+		    debugWrite("IDM_NEW: New game setup complete");
 		    return 0;
 
 		case IDM_OPEN:		// open saved game
@@ -1260,29 +1298,37 @@ void sound_ackack()
 
 void winSetup()
 {
-    //PRINTF("winSetup()\n");
+    debugWrite("winSetup() started");
     debug
     {
 	// set random number generator to predictable value
 	setran();
     }
 
-    //printf("Please wait seven days for creation of world...\n");
+    debugWrite("Calling selmap()");
     selmap();			// read in map
+    debugWrite("selmap() done, calling citini()");
     citini();			// init city variables
+    debugWrite("citini() done");
 
     numply = global.numplayers - IDD_ONE + 1;
     numleft = numply;
+    debugWrite("Starting player loop");
     for (plynum = 0; plynum <= numply; plynum++)
     {
-//PRINTF("player %d\n", plynum);
+	debugWrite("Initializing player");
 	Player *p = &player[plynum];
+	debugWrite("Creating Display");
 	p.display = new Display();
 	Display *d = p.display;
+	debugWrite("Display created, calling initialize()");
 	d.initialize();
+	debugWrite("Display initialized");
 
 	p.num = plynum;
+	debugWrite("Allocating player map");
 	p.map = (plynum == 0) ? var.map.ptr : cast(ubyte *)calloc(MAPSIZE,1);
+	debugWrite("Player map allocated");
 	p.human = (plynum == 1 && !global.demo);
 	p.watch = DAnone;
 
@@ -1296,20 +1342,29 @@ void winSetup()
 
 	if (plynum == 1)
 	{
+	    debugWrite("Setting up player 1 display");
 	    p.secflg = 1;
 	    p.watch = DAwindows;
 	    d.text.TTinit();
 	    d.text.watch = p.watch;
 	    d.maptab = MTcgacolor;
+	    debugWrite("Calling setdispsize");
 	    d.setdispsize(d.text.nrows, d.text.ncols);
+	    debugWrite("setdispsize done");
 	    d.text.clear();
 	    d.text.block_cursor();
+	    debugWrite("Player 1 display setup complete");
 	}
 	if (plynum)
+	{
+	    debugWrite("Calling citsel() for player");
 	    p.citsel();		// select city for each player
+	    debugWrite("citsel() done");
+	}
     }
 
     plynum = 1;			// get the default player
+    debugWrite("winSetup() complete");
 }
 
 void winRestore()
