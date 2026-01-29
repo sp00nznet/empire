@@ -41,9 +41,9 @@ int WinMain(HINSTANCE hInstance,
 	result = doit(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
     }
 
-    catch (Object o)		// catch any uncaught exceptions
+    catch (Throwable t)		// catch any uncaught exceptions
     {
-	MessageBoxA(null, cast(char *)o.toString(), "Error",
+	MessageBoxA(null, cast(char *)(t.msg.ptr), "Error",
 		    MB_OK | MB_ICONEXCLAMATION);
 	result = 0;		// failed
     }
@@ -141,12 +141,12 @@ Global global;
 int doit(HANDLE hInstance, HANDLE hPrevInstance,
                     LPSTR lpszCmdLine, int nCmdShow)
 {
-    static   char[] szAppName = "Empire";
+    static string szAppName = "Empire";
     HWND     hwnd;
     MSG      msg;
-    WNDCLASS wndclass;
+    WNDCLASSA wndclass;
 
-    if (!hPrevInstance) 
+    if (!hPrevInstance)
     {
         wndclass.style         = CS_HREDRAW | CS_VREDRAW;
         wndclass.lpfnWndProc   = &WndProc;
@@ -154,10 +154,10 @@ int doit(HANDLE hInstance, HANDLE hPrevInstance,
         wndclass.cbWndExtra    = 0;
         wndclass.hInstance     = hInstance;
         wndclass.hIcon         = LoadIconA(hInstance, "About");
-        wndclass.hCursor       = LoadCursorA (null, IDC_ARROW);
+        wndclass.hCursor       = LoadCursorA (null, cast(const(char)*)IDC_ARROW);
         wndclass.hbrBackground = GetStockObject (WHITE_BRUSH);
-        wndclass.lpszMenuName  = szAppName;
-        wndclass.lpszClassName = szAppName;
+        wndclass.lpszMenuName  = szAppName.ptr;
+        wndclass.lpszClassName = szAppName.ptr;
 
         RegisterClassA(&wndclass);
 
@@ -228,8 +228,8 @@ void DrawBitmap(HDC hdc, short xStart, short yStart, HBITMAP hBitmap, double sca
     DeleteDC(hMemDC);
 }
 
-extern (Windows) int WndProc(HWND hwnd, uint message, WPARAM wParam,
-                             LPARAM lParam)
+extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
+                             LPARAM lParam) nothrow
 {
     HANDLE        hBitmap;
     HDC           hdc;

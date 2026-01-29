@@ -25,8 +25,8 @@ import core.stdc.stdio;
 import core.stdc.stdlib;
 import std.file;
 
-int min(int a, int b) { return (a < b) ? a : b; }
-int max(int a, int b) { return (a > b) ? a : b; }
+int min(int a, int b) nothrow { return (a < b) ? a : b; }
+int max(int a, int b) nothrow { return (a > b) ? a : b; }
 
 int inhelp;
 string szAppName = "TextWin" ;
@@ -88,8 +88,11 @@ extern(Windows) LRESULT TextWndProc (HWND hwnd, UINT message, WPARAM wParam,
     switch (message)
     {
           case WM_CREATE:
-
-		buffer = cast(char[])std.file.read("help.txt");
+		try {
+		    buffer = cast(char[])std.file.read("help.txt");
+		} catch (Exception e) {
+		    return 0;
+		}
 		numlines = 0;
 		nMaxWidth = 0;
 		p = buffer.ptr;
