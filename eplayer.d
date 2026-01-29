@@ -3589,23 +3589,46 @@ struct Player
 
 	if (r <= 1 || co40 || watch == DAwindows)
 	{
-	    // Position based on player number - fit multiple per row
-	    // Row 0: players 1-4, Row 1: players 5-8, Row 2: players 9-11
-	    int row = (i - 1) / 4;
-	    int col = ((i - 1) % 4) * 20;  // 20 chars per player slot
+	    // Position 0 (top-left) is always the current POV player
+	    // Other players fill positions 1, 2, 3, etc.
+	    int pos;
+	    if (p == &this)
+		pos = 0;  // Current POV player always at top-left
+	    else
+	    {
+		// Calculate position for other players, skipping position 0
+		pos = (i < num) ? i : i - 1;
+		if (pos < 1) pos = 1;
+	    }
+
+	    int row = pos / 4;
+	    int col = (pos % 4) * 20;  // 20 chars per player slot
 	    if (row > 2)
 		row = 2;  // clamp to row 2 max for stats display
 	    t.curs((row << 8) + col);
 
-	    if (p.human)		// if it's a human player (not in demo mode)
-		t.vsmes("You:%s",s);
+	    if (p == &this)		// Current POV player
+	    {
+		if (p.human)
+		    t.vsmes("You:%s",s);
+		else
+		    t.vsmes("*CPU%d:%s",i,s);  // * indicates current POV
+	    }
 	    else
 		t.vsmes("CPU%d:%s",i,s);
 	}
 	else
 	{
-	    int row = (i - 1) / 4;
-	    int col = ((i - 1) % 4) * 20 + 5;
+	    int pos;
+	    if (p == &this)
+		pos = 0;
+	    else
+	    {
+		pos = (i < num) ? i : i - 1;
+		if (pos < 1) pos = 1;
+	    }
+	    int row = pos / 4;
+	    int col = (pos % 4) * 20 + 8;
 	    if (row > 2)
 		row = 2;
 	    t.curs((row << 8) + col);
