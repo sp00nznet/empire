@@ -738,7 +738,6 @@ struct Display
             else
             {
                 text.narrow = cast(ubyte)((cols < 75) ? 1 : 0);   // use 40 column formatting
-                text.narrow = 2;
             }
             text.Tmax = (rows - 1) * 256 + cols - 1;
         }

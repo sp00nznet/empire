@@ -19,6 +19,7 @@
 module eplayer;
 
 import core.stdc.stdio : sprintf;
+import core.stdc.string : strlen;
 
 import empire;
 import display;
@@ -3533,52 +3534,61 @@ struct Player
     {   int plysave;
 	int i;
 	int co40;
-	char* s;
+	const(char)* s;
 	char[r.sizeof * 3 + 1] buf;
 	Text *t = &display.text;
 
 	if (!watch)
 	    return;
-	if (t.narrow == 2)
-	    return;
 	co40 = t.narrow;
 	i = p.num;
-	if (i >= 6)
-	    return;
 
 	if (p.defeat)
-	    s = cast(char*)"lost";
+	    s = "X".ptr;  // X for defeated
 	else
 	{
 	    sprintf(buf.ptr,"%d",r);
 	    s = buf.ptr;
 	}
 
-	if (r <= 1 || co40 || watch == DAwindows)
-	{
-	    if (co40)
-		t.curs(0x400 + i * 10);
-	    else
-		t.curs((i - 1) << 8);
+	// All 11 players on row 0
+	// Players 1-9: 4 chars each "N:RR" (36 chars, cols 0-35)
+	// Players 10-11: 5 chars each "NN:RR" (10 chars, cols 36-45)
+	// POV player marked with asterisk instead of colon
+	int col;
+	char[8] outbuf;
+	int width;
 
-	    if (p == this)		// if it's this player
-	    {   if (co40)
-		    t.vsmes("Yr: %s",s);
-		else
-		    t.vsmes("Your  : %s",s);
-	    }
-	    else
-	    {   if (co40)
-		    t.vsmes("P%d: %s",i,s);
-		else
-		    t.vsmes("Plyr %d: %s",i,s);
-	    }
+	if (i <= 9)
+	{
+	    col = (i - 1) * 4;
+	    width = 4;
 	}
 	else
 	{
-	    t.curs(((i - 1) << 8) + 8);
-	    t.vsmes(s);
+	    col = 36 + (i - 10) * 5;
+	    width = 5;
 	}
+	t.curs(col);  // row 0, column varies
+
+	// Format with asterisk for POV player
+	if (p == &this)		// Current POV player - mark with asterisk
+	{
+	    if (p.human)
+		sprintf(outbuf.ptr, "*Y%s", s);
+	    else
+		sprintf(outbuf.ptr, "*%d%s", i, s);
+	}
+	else
+	{
+	    sprintf(outbuf.ptr, "%d:%s", i, s);
+	}
+	// Pad to width chars
+	int len = cast(int)strlen(outbuf.ptr);
+	while (len < width)
+	    outbuf[len++] = ' ';
+	outbuf[width] = 0;
+	t.smes(outbuf.ptr);
     }
 
     /**************************************
