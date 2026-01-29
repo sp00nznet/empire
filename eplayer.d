@@ -3597,7 +3597,7 @@ struct Player
 		row = 2;  // clamp to row 2 max for stats display
 	    t.curs((row << 8) + col);
 
-	    if (p == &this)		// if it's this player
+	    if (p.human)		// if it's a human player (not in demo mode)
 		t.vsmes("You:%s",s);
 	    else
 		t.vsmes("CPU%d:%s",i,s);
