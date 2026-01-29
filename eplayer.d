@@ -3585,45 +3585,43 @@ struct Player
 	    s = buf.ptr;
 	}
 
-	// Display players on rows 0-1
-	// Row 0: players 1-6
-	// Row 1: players 7-11
-	// Each slot is 7 characters wide
-	int row, col;
-	char[16] outbuf;
+	// All 11 players on row 0
+	// Players 1-9: 4 chars each "N:RR" (36 chars, cols 0-35)
+	// Players 10-11: 5 chars each "NN:RR" (10 chars, cols 36-45)
+	// POV player marked with asterisk instead of colon
+	int col;
+	char[8] outbuf;
+	int width;
 
-	if (i <= 6)
+	if (i <= 9)
 	{
-	    row = 0;
-	    col = (i - 1) * 7;
+	    col = (i - 1) * 4;
+	    width = 4;
 	}
 	else
 	{
-	    row = 1;
-	    col = (i - 7) * 7;
+	    col = 36 + (i - 10) * 5;
+	    width = 5;
 	}
+	t.curs(col);  // row 0, column varies
 
-	t.curs((row << 8) + col);  // position cursor
-
-	// Format with 7 chars per slot
+	// Format with asterisk for POV player
 	if (p == &this)		// Current POV player - mark with asterisk
 	{
 	    if (p.human)
-		sprintf(outbuf.ptr, "*Y:%-3s ", s);  // 7 chars
-	    else if (i <= 9)
-		sprintf(outbuf.ptr, "*%d:%-3s ", i, s);  // 7 chars for 1-9
+		sprintf(outbuf.ptr, "*Y%s", s);
 	    else
-		sprintf(outbuf.ptr, "*%d:%-2s ", i, s);  // 7 chars for 10-11
+		sprintf(outbuf.ptr, "*%d%s", i, s);
 	}
 	else
 	{
-	    if (i <= 9)
-		sprintf(outbuf.ptr, "%d:%-4s ", i, s);  // 7 chars for 1-9
-	    else
-		sprintf(outbuf.ptr, "%d:%-3s ", i, s);  // 7 chars for 10-11
+	    sprintf(outbuf.ptr, "%d:%s", i, s);
 	}
-	// Ensure exactly 7 chars
-	outbuf[7] = 0;
+	// Pad to width chars
+	int len = cast(int)strlen(outbuf.ptr);
+	while (len < width)
+	    outbuf[len++] = ' ';
+	outbuf[width] = 0;
 	t.smes(outbuf.ptr);
     }
 
