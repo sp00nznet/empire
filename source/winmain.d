@@ -703,9 +703,9 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                             // Render player stats (left side)
                             TextOutA(hdc, 0, global.cyChar * i, vbuffer[i].ptr, splitCol);
 
-                            // Render action messages (right side of screen)
+                            // Render action messages (right side, with room for 45 chars)
                             int rightLen = len - splitCol;
-                            int rightX = global.cxClient - (rightLen * global.cxChar);
+                            int rightX = global.cxClient - (45 * global.cxChar);
                             if (rightX < splitCol * global.cxChar) rightX = splitCol * global.cxChar;
                             TextOutA(hdc, rightX, global.cyChar * i, vbuffer[i].ptr + splitCol, rightLen);
                         }
