@@ -646,10 +646,10 @@ version (none)
 }
 else
 {
-		sx = global.cxClient / 120.0;
+		sx = global.cxClient / 1328.0;
 		if (sx < 1)
 		    sx = 1;
-		sy = global.cyClient / 160.0;
+		sy = global.cyClient / 800.0;
 		if (sy < 1)
 		    sy = 1;
 }
