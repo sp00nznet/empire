@@ -15,7 +15,6 @@
         "source/core",
         "source/platform/windows"
     ],
-    "versions": ["Windows"],
     "dflags-ldc": ["-mcpu=native"],
     "dflags-dmd": [],
     "lflags-windows": [
@@ -26,9 +25,6 @@
         "comdlg32.lib",
         "shcore.lib",
         "empire.res"
-    ],
-    "preBuildCommands-windows": [
-        "rc /nologo /fo empire.res empire.rc"
     ],
     "buildTypes": {
         "release": {
@@ -41,8 +37,7 @@
     "configurations": [
         {
             "name": "windows",
-            "platforms": ["windows"],
-            "versions": ["Windows"]
+            "platforms": ["windows"]
         }
     ]
 }
