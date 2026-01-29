@@ -255,6 +255,8 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 
     // File dialog box
     static char[_MAX_PATH] szFileName;
+
+  try {
     static char[_MAX_FNAME + _MAX_EXT] szTitleName;
     static const(char)*[] szFilter = [ "Empire Files (*.EMP)", "*.emp", "" ];
 
@@ -902,6 +904,9 @@ else
 	default:
 	    break;
     }
+  } catch (Exception e) {
+    return 0;
+  }
     return DefWindowProcA(hwnd, message, wParam, lParam);
 }
 
