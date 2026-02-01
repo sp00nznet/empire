@@ -84,7 +84,7 @@ deploy-windows:
     - 'if (-not (Test-Path $destPath)) { New-Item -ItemType Directory -Path $destPath -Force }'
     - 'Copy-Item -Path $zipName -Destination $destPath -Force'
     - 'net use R: /delete'
-    - 'ssh root@192.168.100.22 "chmod 755 /releases/$env:CI_PROJECT_NAME/$env:CI_COMMIT_REF_NAME/$zipName"'
+    - 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes root@192.168.100.22 "chmod 755 /releases/$env:CI_PROJECT_NAME/$env:CI_COMMIT_REF_NAME/$zipName"'
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == "master"
