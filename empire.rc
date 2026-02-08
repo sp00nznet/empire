@@ -93,6 +93,22 @@ BMP_UNKNOWN10 BITMAP unknown10.bmp
 BMP_BLAST BITMAP blast.bmp
 BMP_BLASTMASK BITMAP blastmask.bmp
 
+/* Sound effects embedded as WAVE resources */
+click WAVE "click.wav"
+explode WAVE "explode.wav"
+splash WAVE "splash.wav"
+flyby WAVE "flyby.wav"
+gun_1 WAVE "gun_1.wav"
+gun_3 WAVE "gun_3.wav"
+ackack1 WAVE "ackack1.wav"
+bubbles WAVE "bubbles.wav"
+fuel WAVE "fuel.wav"
+error WAVE "error.wav"
+intro WAVE "intro.wav"
+taps WAVE "taps.wav"
+machine1 WAVE "machine1.wav"
+explosi1 WAVE "explosi1.wav"
+
 About ICON empire.ico
 
 AboutBox DIALOG  20, 20, 160, 110

@@ -42,6 +42,10 @@ import twin;
 import init;
 import maps;
 import var;
+import sprites;
+
+// Tile size for sprites (original was 10, new high-res is 96)
+enum TILE_SIZE = 96;
 
 /********************************************************/
 
@@ -324,6 +328,9 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
             global.hBlast = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_BLAST));
             global.hBlastmask = LoadBitmapA(global.hinst, MAKEINTRESOURCEA(BMP_BLASTMASK));
 
+            // Initialize new sprite system
+            initSprites();
+
             hdc = GetDC(hwnd);
 
             logfont.lfHeight = 10;
@@ -346,22 +353,22 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
             global.pixelx = global.cxClient;
             if (global.pixelx < 120)
                 global.pixelx = 120;
-            if (global.pixelx > (Mcolmx + 1) * 10)
-                global.pixelx = (Mcolmx + 1) * 10;
-            if (global.pixelx / cast(int)(10 * global.scalex) < 5)
+            if (global.pixelx > (Mcolmx + 1) * TILE_SIZE)
+                global.pixelx = (Mcolmx + 1) * TILE_SIZE;
+            if (global.pixelx / cast(int)(TILE_SIZE * global.scalex) < 5)
             {
-                global.scalex = global.pixelx / (10 * 5.0);
+                global.scalex = global.pixelx / (TILE_SIZE * 5.0);
                 global.scaley = global.scalex;
             }
 
             global.pixely = global.cyClient - 40;
             if (global.pixely < 120)
                 global.pixely = 120;
-            if (global.pixely > (Mrowmx + 1) * 10)
-                global.pixely = (Mrowmx + 1) * 10;
-            if (global.pixely / cast(int)(10 * global.scaley) < 5)
+            if (global.pixely > (Mrowmx + 1) * TILE_SIZE)
+                global.pixely = (Mrowmx + 1) * TILE_SIZE;
+            if (global.pixely / cast(int)(TILE_SIZE * global.scaley) < 5)
             {
-                global.scaley = global.pixely / (10 * 5.0);
+                global.scaley = global.pixely / (TILE_SIZE * 5.0);
                 global.scalex = global.scaley;
             }
 
@@ -597,7 +604,7 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                     SRCCOPY);
                 static int intro;
                 if (!intro++)
-                    PlaySoundA("intro.wav", null, SND_ASYNC | SND_FILENAME);
+                    PlaySoundA("intro", global.hinst, SND_ASYNC | SND_RESOURCE);
             }
             else
             {
@@ -616,8 +623,8 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                 r = ROW(global.ulcorner);
                 c = COL(global.ulcorner);
                 int rmax, cmax;
-                dx = cast(int)(10 * global.scalex);
-                dy = cast(int)(10 * global.scaley);
+                dx = cast(int)(TILE_SIZE * global.scalex);
+                dy = cast(int)(TILE_SIZE * global.scaley);
                 rmax = r + (global.offsety + global.pixely + dy - 1) / dy;
                 cmax = c + (global.offsetx + global.pixelx + dx - 1) / dx;
                 if (rmax > Mrowmx)
@@ -637,15 +644,47 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
                         loc_t loc = j * (Mcolmx + 1) + i;
                         HBITMAP h;
                         int x;
+                        int mapval = global.map[loc];
 
                         x = (i - c) * dx - global.offsetx;
                         if (x >= clipbox.right ||
                             x + dx < clipbox.left)
                             continue;
 
-                        h = global.mapvaltab[global.map[loc]];
+                        // Check if this is an army unit (map values 5, 15, 25, 35, 45, 55 for teams 1-6)
+                        // Army is at index 5 within each team's 10-sprite block (starting at 4)
+                        bool isArmy = false;
+                        int team = 0;
+                        if (mapval >= 5 && mapval < MAPMAX)
+                        {
+                            // Check if this mapval is an army (type A)
+                            // Army is at offset 1 from team base (which is 4 + (team-1)*10)
+                            // So army indices are: 5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105
+                            int offset = (mapval - 4) % 10;  // Position within team block
+                            if (offset == 1)  // Army is at offset 1
+                            {
+                                isArmy = true;
+                                team = (mapval - 5) / 10 + 1;  // Calculate team number (1-based)
+                            }
+                        }
+
+                        // Use new sprite system for armies if available
+                        if (isArmy && team >= 1 && team <= 11)
+                        {
+                            Sprite* sprite = getUnitSprite(0, team);  // 0 = Army
+                            if (sprite && sprite.bitmap)
+                            {
+                                int screenX = x;
+                                int screenY = y;
+                                // Draw with transparency
+                                drawSprite(hdc, screenX, screenY, sprite, global.scalex, global.scaley);
+                                continue;  // Skip the old bitmap drawing
+                            }
+                        }
+
+                        h = global.mapvaltab[mapval];
                         if ((j % 10) == 0 && (i % 10) == 0 &&
-                            global.map[loc] == 0)
+                            mapval == 0)
                             h = global.unknown10;
                         mode = SRCCOPY;
                         if (loc == global.cursor && global.player.mode != mdSURV)
@@ -721,6 +760,9 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam,
             return 0;
 
         case WM_DESTROY:
+            // Clean up new sprite system
+            cleanupSprites();
+
             for (i = 0; i < MAPMAX; i++)
             {
                 if (global.mapvaltab[i])
@@ -1001,22 +1043,22 @@ extern (C) void sound_click()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("click.wav", null, SND_ASYNC | SND_FILENAME | SND_NOSTOP);
+        PlaySoundA("click", global.hinst, SND_ASYNC | SND_RESOURCE | SND_NOSTOP);
 }
 
 void sound_gun()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("gun_1.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("gun_1", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_bang()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-    {   PlaySoundA("explosi1.wav", null, SND_SYNC | SND_FILENAME);
-        PlaySoundA("bubbles.wav", null, SND_SYNC | SND_FILENAME);
+    {   PlaySoundA("explosi1", global.hinst, SND_SYNC | SND_RESOURCE);
+        PlaySoundA("bubbles", global.hinst, SND_SYNC | SND_RESOURCE);
     }
 }
 
@@ -1024,70 +1066,70 @@ void sound_error()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("error.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("error", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_splash()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("splash.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("splash", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_aground()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("bubbles.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("bubbles", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_subjugate()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("machine1.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("machine1", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_crushed()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("gun_3.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("gun_3", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_flyby()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("flyby.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("flyby", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_fcrash()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("explode.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("explode", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_fuel()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("fuel.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("fuel", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_taps()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("taps.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("taps", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_ackack()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-        PlaySoundA("ackack1.wav", null, SND_SYNC | SND_FILENAME);
+        PlaySoundA("ackack1", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 /***********************************
@@ -1210,7 +1252,7 @@ int adjSector(double newscalex, double newscaley)
         return 0;
 
     ncols = COL(global.cursor) - COL(global.ulcorner);
-    dx = cast(int)(10 * global.scalex);
+    dx = cast(int)(TILE_SIZE * global.scalex);
     cursorx = ncols * dx + (dx / 2) - global.offsetx;
     dx = cast(int)(10 * newscalex);
     n = (cursorx - (dx / 2) + (dx - 1)) / dx;
@@ -1250,7 +1292,7 @@ int adjSector(double newscalex, double newscaley)
     assert(scmin <= COL(global.cursor));
 
     nrows = ROW(global.cursor) - ROW(global.ulcorner);
-    dy = cast(int)(10 * global.scaley);
+    dy = cast(int)(TILE_SIZE * global.scaley);
     cursory = nrows * dy + (dy / 2) - global.offsety;
     dy = cast(int)(10 * newscaley);
     n = (cursory - (dy / 2) + (dy - 1)) / dy;
@@ -1325,8 +1367,8 @@ void invalidateLoc(loc_t loc)
 
     r = ROW(loc) - ROW(global.ulcorner);
     c = COL(loc) - COL(global.ulcorner);
-    dx = cast(int)(10 * global.scalex);
-    dy = cast(int)(10 * global.scaley);
+    dx = cast(int)(TILE_SIZE * global.scalex);
+    dy = cast(int)(TILE_SIZE * global.scaley);
 
     rect.left = c * dx - global.offsetx;
     rect.top = 40 + r * dy - global.offsety;
@@ -1369,8 +1411,8 @@ void invalidateLocRect(loc_t loc1, loc_t loc2)
         c2 = c;
     }
 
-    dx = cast(int)(10 * global.scalex);
-    dy = cast(int)(10 * global.scaley);
+    dx = cast(int)(TILE_SIZE * global.scalex);
+    dy = cast(int)(TILE_SIZE * global.scaley);
 
     rect.left = c1 * dx - global.offsetx;
     rect.top = 40 + r1 * dy - global.offsety;
@@ -1400,7 +1442,7 @@ int LocToX(loc_t loc)
     int col;
 
     col = COL(loc) - COL(global.ulcorner);
-    dx = cast(int)(10 * global.scalex);
+    dx = cast(int)(TILE_SIZE * global.scalex);
     x = col * dx + dx / 2 - global.offsetx;
     return x;
 }
@@ -1412,7 +1454,7 @@ int LocToY(loc_t loc)
     int row;
 
     row = ROW(loc) - ROW(global.ulcorner);
-    dy = cast(int)(10 * global.scaley);
+    dy = cast(int)(TILE_SIZE * global.scaley);
     y = 40 + row * dy + dy / 2 - global.offsety;
     return y;
 }
@@ -1556,8 +1598,8 @@ void win_invalidate_loc(uint loc)
     RECT locbox;
     int x = LocToX(loc);
     int y = LocToY(loc);
-    int dx = cast(int)(10 * global.scalex);
-    int dy = cast(int)(10 * global.scaley);
+    int dx = cast(int)(TILE_SIZE * global.scalex);
+    int dy = cast(int)(TILE_SIZE * global.scaley);
 
     locbox.left = x - dx / 2;
     locbox.right = x + dx / 2;
@@ -1638,25 +1680,25 @@ void win_play_sound(int id, bool sync)
     if (!global.speaker)
         return;
 
-    static immutable const(char)*[] soundFiles = [
-        "click.wav",        // 0: Click
-        "explode.wav",      // 1: Explosion
-        "splash.wav",       // 2: Splash
-        "flyby.wav",        // 3: Flyby
-        "gun_1.wav",        // 4: Gunfire
-        "ackack1.wav",      // 5: AckAck
-        "bubbles.wav",      // 6: Bubbles
-        "fuel.wav",         // 7: Fuel
-        "error.wav",        // 8: Error
-        "intro.wav",        // 9: Intro
-        "taps.wav",         // 10: Taps
-        "machine1.wav",     // 11: MachineGun
+    static immutable const(char)*[] soundResources = [
+        "click",        // 0: Click
+        "explode",      // 1: Explosion
+        "splash",       // 2: Splash
+        "flyby",        // 3: Flyby
+        "gun_1",        // 4: Gunfire
+        "ackack1",      // 5: AckAck
+        "bubbles",      // 6: Bubbles
+        "fuel",         // 7: Fuel
+        "error",        // 8: Error
+        "intro",        // 9: Intro
+        "taps",         // 10: Taps
+        "machine1",     // 11: MachineGun
     ];
 
-    if (id >= 0 && id < soundFiles.length)
+    if (id >= 0 && id < soundResources.length)
     {
-        uint flags = SND_FILENAME | (sync ? SND_SYNC : SND_ASYNC);
-        PlaySoundA(soundFiles[id], null, flags);
+        uint flags = SND_RESOURCE | (sync ? SND_SYNC : SND_ASYNC);
+        PlaySoundA(soundResources[id], global.hinst, flags);
     }
 }
 
