@@ -750,7 +750,7 @@ struct Display
 
 	version (Windows)
 	{
-	    version (0)
+	    version (none)
 	    {
 		text.narrow = 0;
 		if (global.cxClient < 75 * 10)

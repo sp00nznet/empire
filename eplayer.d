@@ -202,7 +202,7 @@ struct Player
 	    if (!u.loc || u.own != p.num)	// unit was destroyed
 		break;
 
-	    debug chkmov(r2);		// check for legit move
+	    debug chkmov(r2, 0);		// check for legit move
 	    assert(chkloc(u.loc));		// check for valid location
 
 	    e = p.evalu8(u,r2);
@@ -3427,7 +3427,7 @@ struct Player
 	    city[i].fnd >= p.round + typx[city[i].phs].prodtime - 5 &&
 	    p.patlnd(city[i].loc,loc))	// route to enemy army
 	    {
-		debug cmes(0x400,"THREAT");
+		// debug cmes(0x400,"THREAT"); // disabled - cmes not available
 		city[i].phs = -1;		// select new phase
 	    }
 	}

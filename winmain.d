@@ -326,23 +326,10 @@ extern (Windows) LRESULT WndProc(HWND hwnd, uint message, WPARAM wParam,
 	    // About dialog box
 	    //hInstance = ((LPCREATESTRUCT) lParam)->hInstance;
 
-	    version (0)
-	    {
-		global.lpfnAboutDlgProc = cast(DLGPROC) &AboutDlgProc;
-		global.lpfnCitySelectDlgProc = cast(DLGPROC) &CitySelectDlgProc;
-		global.lpfnInitDlgProc = cast(DLGPROC) &InitDlgProc;
-	    }
-	    else
-	    {
-		global.lpfnAboutDlgProc = cast(DLGPROC) MakeProcInstance (cast(FARPROC) AboutDlgProc,
-						    global.hinst);
-
-		global.lpfnCitySelectDlgProc = cast(DLGPROC) MakeProcInstance (cast(FARPROC) CitySelectDlgProc,
-						    global.hinst);
-
-		global.lpfnInitDlgProc = cast(DLGPROC) MakeProcInstance (cast(FARPROC) InitDlgProc,
-						    global.hinst) ;
-	    }
+	    // Direct function pointer assignment (no MakeProcInstance needed in modern Windows)
+	    global.lpfnAboutDlgProc = cast(DLGPROC) &AboutDlgProc;
+	    global.lpfnCitySelectDlgProc = cast(DLGPROC) &CitySelectDlgProc;
+	    global.lpfnInitDlgProc = cast(DLGPROC) &InitDlgProc;
 
 	    // Menu
 	    global.hMenu = LoadMenuA(global.hinst, "PopMenu");
@@ -658,7 +645,7 @@ else
 			SRCCOPY);
 		static int intro;
 		if (!intro++)
-		    PlaySoundA("intro.wav", null, SND_ASYNC | SND_FILENAME);
+		    PlaySoundA("intro", global.hinst, SND_ASYNC | SND_RESOURCE);
 	    }
 	    else
 	    {
@@ -1235,91 +1222,93 @@ extern (C) void sound_click()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("click.wav", null, SND_ASYNC | SND_FILENAME | SND_NOSTOP);
+	PlaySoundA("click", global.hinst, SND_ASYNC | SND_RESOURCE | SND_NOSTOP);
 }
 
 void sound_gun()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("gun_1.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("gun_1", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_bang()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("explosi1.wav", null, SND_ASYNC | SND_FILENAME);
+    {	PlaySoundA("explosi1", global.hinst, SND_SYNC | SND_RESOURCE);
+	PlaySoundA("bubbles", global.hinst, SND_SYNC | SND_RESOURCE);
+    }
 }
 
 void sound_error()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("error.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("error", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_splash()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("splash.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("splash", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_aground()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("bubbles.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("bubbles", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_subjugate()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("machine1.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("machine1", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_crushed()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("gun_3.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("gun_3", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_flyby()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("flyby.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("flyby", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_fcrash()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("explode.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("explode", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_fuel()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("fuel.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("fuel", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_taps()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("taps.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("taps", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 void sound_ackack()
 {
     UpdateWindow(global.hwnd);
     if (global.speaker)
-	PlaySoundA("ackack1.wav", null, SND_ASYNC | SND_FILENAME);
+	PlaySoundA("ackack1", global.hinst, SND_SYNC | SND_RESOURCE);
 }
 
 /***********************************
