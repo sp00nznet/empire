@@ -12,6 +12,12 @@ A classic grand strategy wargame created by Walter Bright in 1977, now rebuilt a
 
 ---
 
+![Title Screen](screenshot-title.png)
+
+![Gameplay](screenshot-game.png)
+
+---
+
 ## About the Game
 
 Empire is a turn-based strategy game of military conquest. You start with a single city on a randomly generated world map shrouded in fog of war. Produce armies, fighters, and naval units. Explore the unknown. Capture enemy cities. Destroy all opposition.
